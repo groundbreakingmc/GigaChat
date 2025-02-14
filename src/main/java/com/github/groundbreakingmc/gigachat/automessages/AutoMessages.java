@@ -51,14 +51,15 @@ public final class AutoMessages {
     }
 
     public void cancel() {
-        scheduler.execute(() -> {
-            if (task != null) {
-                task.cancel(false);
-                autoMessagesClone.clear();
+        if (task != null) {
+            ScheduledFuture<?> savedTask = task;
+            task = null;
 
-                task = null;
-            }
-        });
+            scheduler.execute(() -> {
+                savedTask.cancel(false);
+                autoMessagesClone.clear();
+            });
+        }
     }
 
     public void shutdown() {
