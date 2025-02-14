@@ -134,6 +134,7 @@ public final class GigaChat extends JavaPlugin {
     @Override
     public void onDisable() {
         this.database.closeConnection();
+        this.autoMessages.shutdown();
         super.getServer().getScheduler().cancelTasks(this);
     }
 

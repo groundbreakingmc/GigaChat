@@ -35,7 +35,6 @@ public final class ReloadArgument extends Argument {
 
     private void reloadAll() {
         super.getPlugin().getAutoMessages().cancel();
-        super.getPlugin().getAutoMessages().clearClonedAutoMessages();
         super.getPlugin().reloadConfig();
         super.getPlugin().setupConfigValues();
         super.getPlugin().getCooldownCollections().setCooldowns();
@@ -46,7 +45,6 @@ public final class ReloadArgument extends Argument {
         for (final String arg : ImmutableSet.copyOf(args)) { // ImmutableSet needs to remove all duplicates
             if (arg.equalsIgnoreCase("auto-messages")) {
                 super.getPlugin().getAutoMessages().cancel();
-                super.getPlugin().getAutoMessages().clearClonedAutoMessages();
                 super.getPlugin().getAutoMessagesValues().setValues();
                 super.getPlugin().getAutoMessages().run();
             }

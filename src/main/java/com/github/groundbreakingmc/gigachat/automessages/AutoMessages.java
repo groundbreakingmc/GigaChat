@@ -8,11 +8,13 @@ import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public final class AutoMessages {
 
@@ -21,7 +23,9 @@ public final class AutoMessages {
 
     private final List<Pair<String, SoundSettings>> autoMessagesClone = new ObjectArrayList<>();
 
-    private BukkitTask task;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    private ScheduledFuture<?> task;
 
     public AutoMessages(final GigaChat plugin) {
         this.plugin = plugin;
@@ -29,22 +33,36 @@ public final class AutoMessages {
     }
 
     public void run() {
-        this.task = (new BukkitRunnable() {
-            public void run() {
-                final Pair<String, SoundSettings> autoMessageConstructor = AutoMessages.this.getAutoMessage();
-                if (autoMessageConstructor == null) {
-                    return;
-                }
+        if (task != null && !task.isCancelled()) {
+            return;
+        }
 
-                final String autoMessage = autoMessageConstructor.getLeft();
-                final SoundSettings sound = autoMessageConstructor.getRight();
-                AutoMessages.this.send(autoMessage, sound);
+        int interval = this.autoMessagesValues.getSendInterval();
+        task = scheduler.scheduleWithFixedDelay(() -> {
+            final Pair<String, SoundSettings> autoMessageConstructor = AutoMessages.this.getAutoMessage();
+            if (autoMessageConstructor == null) {
+                return;
             }
-        }).runTaskTimerAsynchronously(this.plugin, 0L, this.autoMessagesValues.getSendInterval() * 20L);
+
+            final String autoMessage = autoMessageConstructor.getLeft();
+            final SoundSettings sound = autoMessageConstructor.getRight();
+            AutoMessages.this.send(autoMessage, sound);
+        }, 0, interval, TimeUnit.SECONDS);
     }
 
     public void cancel() {
-        this.task.cancel();
+        scheduler.execute(() -> {
+            if (task != null) {
+                task.cancel(false);
+                autoMessagesClone.clear();
+
+                task = null;
+            }
+        });
+    }
+
+    public void shutdown() {
+        scheduler.shutdownNow();
     }
 
     private void send(final String autoMessage, final SoundSettings soundSettings) {
@@ -73,9 +91,5 @@ public final class AutoMessages {
         }
 
         return this.autoMessagesClone.remove(0);
-    }
-
-    public void clearClonedAutoMessages() {
-        this.autoMessagesClone.clear();
     }
 }
