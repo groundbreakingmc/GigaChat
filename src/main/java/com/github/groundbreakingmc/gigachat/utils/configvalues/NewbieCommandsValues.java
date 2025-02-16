@@ -64,7 +64,7 @@ public final class NewbieCommandsValues {
                 this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");
             } else {
                 final boolean ignoreCancelled = settings.getBoolean("ignore-cancelled", true);
-                ListenerRegisterUtil.unregister(this.plugin.getChatListener());
+                ListenerRegisterUtil.unregister(newbieCommandListener);
                 ListenerRegisterUtil.register(
                         this.plugin,
                         newbieCommandListener,
@@ -89,7 +89,7 @@ public final class NewbieCommandsValues {
             this.blockedCommands.clear();
             this.blockedCommands.addAll(settings.getStringList("blocked-commands"));
         } else {
-            ListenerRegisterUtil.unregister(this.plugin.getChatListener());
+            ListenerRegisterUtil.unregister(newbieCommandListener);
         }
     }
 }

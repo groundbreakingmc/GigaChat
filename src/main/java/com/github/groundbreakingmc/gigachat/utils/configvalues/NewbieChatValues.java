@@ -59,7 +59,7 @@ public final class NewbieChatValues {
                 this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");
             } else {
                 final boolean ignoreCancelled = settings.getBoolean("ignore-cancelled", true);
-                ListenerRegisterUtil.unregister(this.plugin.getChatListener());
+                ListenerRegisterUtil.unregister(newbieChatListener);
                 ListenerRegisterUtil.register(
                         this.plugin,
                         newbieChatListener,
