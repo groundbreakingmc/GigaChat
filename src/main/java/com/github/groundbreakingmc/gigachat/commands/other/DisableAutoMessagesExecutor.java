@@ -50,14 +50,16 @@ public final class DisableAutoMessagesExecutor implements TabExecutor {
             return this.process(
                     AutoMessagesCollection::remove,
                     sender, senderUUID,
-                    Database.REMOVE_PLAYER_FROM_AUTO_MESSAGES, this.messages.getAutoMessagesEnabled()
+                    Database.REMOVE_PLAYER_FROM_AUTO_MESSAGES, this.messages.getAutoMessagesEnabled(),
+                    "enabled"
             );
         }
 
         return this.process(
                 AutoMessagesCollection::add,
                 sender, senderUUID,
-                Database.ADD_PLAYER_TO_AUTO_MESSAGES, this.messages.getAutoMessagesDisabled()
+                Database.ADD_PLAYER_TO_AUTO_MESSAGES, this.messages.getAutoMessagesDisabled(),
+                "disabled"
         );
     }
 
@@ -65,7 +67,8 @@ public final class DisableAutoMessagesExecutor implements TabExecutor {
     private boolean process(
             final Consumer<UUID> consumer,
             final Player sender, final UUID senderUUID,
-            final String query, final String message) {
+            final String query, final String message,
+            final String mode) {
         consumer.accept(senderUUID);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
@@ -76,6 +79,11 @@ public final class DisableAutoMessagesExecutor implements TabExecutor {
         });
 
         sender.sendMessage(message);
+
+        this.plugin.getCommandLogger().log(() ->
+                "[DISABLE-AUTO-MESSAGES] [" + sender.getName() + "] " + mode
+        );
+
         return true;
     }
 

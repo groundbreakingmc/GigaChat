@@ -59,7 +59,8 @@ public class ChatSpyExecutor {
                     senderUUID,
                     Database.REMOVE_CHAT_FOR_PLAYER_FROM_CHAT_LISTENERS,
                     chatName,
-                    this.messages.getChatsSpyDisabled()
+                    this.messages.getChatsSpyDisabled(),
+                    "disabled"
             );
         }
 
@@ -69,14 +70,16 @@ public class ChatSpyExecutor {
                 senderUUID,
                 Database.ADD_PLAYER_TO_CHAT_LISTENERS,
                 chatName,
-                this.messages.getChatsSpyEnabled()
+                this.messages.getChatsSpyEnabled(),
+                "enabled"
         );
     }
 
     private boolean process(
             final Consumer<UUID> consumer,
             final Player sender, final UUID senderUUID,
-            final String query, final String chatName, final String message) {
+            final String query, final String chatName, final String message,
+            final String mode) {
         final String chatNameReplacement = this.messages.getChatNames().getOrDefault(chatName, chatName);
 
         consumer.accept(senderUUID);
@@ -89,6 +92,11 @@ public class ChatSpyExecutor {
         });
 
         sender.sendMessage(message.replace("{chat}", chatNameReplacement));
+
+        this.plugin.getCommandLogger().log(() ->
+                "[SPY] [" + sender.getName() + "] " + mode + " spy in " + chatName + " chat"
+        );
+
         return true;
     }
 }

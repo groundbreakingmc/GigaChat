@@ -25,6 +25,7 @@ public class ChatUtil {
             throw new InvalidFormatException("Chat format cannot be null! Path: \"chats." + chatKey + ".format\"");
         }
 
+        chatBuilder.name(chatSection.getName());
         chatBuilder.format(format);
 
         chatBuilder.hover(Hover.get(chatSection.getConfigurationSection("hover"), defaultChat.hover()));

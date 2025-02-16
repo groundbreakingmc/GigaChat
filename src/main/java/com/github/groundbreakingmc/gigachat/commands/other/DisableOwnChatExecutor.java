@@ -47,30 +47,33 @@ public final class DisableOwnChatExecutor implements TabExecutor {
     private boolean processDisable(final Player sender) {
         final UUID senderUUID = sender.getUniqueId();
         if (DisabledChatCollection.contains(senderUUID)) {
-            this.plugin.getCustomLogger().info(sender.getName() +  " removed");
+            this.plugin.getCustomLogger().info(sender.getName() + " removed");
             return this.process(
                     DisabledChatCollection::remove,
                     sender,
                     senderUUID,
                     Database.REMOVE_PLAYER_FROM_DISABLED_CHAT,
-                    this.messages.getOwnChatDisabled()
+                    this.messages.getOwnChatDisabled(),
+                    "disabled"
             );
         }
 
-        this.plugin.getCustomLogger().info(sender.getName() +  " added");
+        this.plugin.getCustomLogger().info(sender.getName() + " added");
         return this.process(
                 DisabledChatCollection::add,
                 sender,
                 senderUUID,
                 Database.ADD_PLAYER_TO_DISABLED_CHAT,
-                this.messages.getOwnChatEnabled()
+                this.messages.getOwnChatEnabled(),
+                "enabled"
         );
     }
 
     private boolean process(
             final Consumer<UUID> consumer,
             final Player sender, final UUID senderUUID,
-            final String query, final String message) {
+            final String query, final String message,
+            final String mode) {
         consumer.accept(senderUUID);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
@@ -81,6 +84,11 @@ public final class DisableOwnChatExecutor implements TabExecutor {
         });
 
         sender.sendMessage(message);
+
+        this.plugin.getCommandLogger().log(() ->
+                "[DISABLE-CHAT] [" + sender.getName() + "] " + mode
+        );
+
         return true;
     }
 

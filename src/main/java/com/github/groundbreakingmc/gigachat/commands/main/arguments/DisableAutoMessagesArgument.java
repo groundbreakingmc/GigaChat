@@ -45,7 +45,8 @@ public final class DisableAutoMessagesArgument extends Argument {
                     target,
                     Database.REMOVE_PLAYER_FROM_AUTO_MESSAGES,
                     super.getMessages().getAutoMessagesEnabledOther(),
-                    super.getMessages().getAutoMessagesEnabledByOther()
+                    super.getMessages().getAutoMessagesEnabledByOther(),
+                    "enabled"
             );
         }
 
@@ -55,7 +56,8 @@ public final class DisableAutoMessagesArgument extends Argument {
                 target,
                 Database.ADD_PLAYER_TO_AUTO_MESSAGES,
                 super.getMessages().getAutoMessagesDisabledOther(),
-                super.getMessages().getAutoMessagesDisabledByOther()
+                super.getMessages().getAutoMessagesDisabledByOther(),
+                "disabled"
         );
     }
 
@@ -64,7 +66,8 @@ public final class DisableAutoMessagesArgument extends Argument {
                             final Player target,
                             final String query,
                             final String senderMessage,
-                            final String targetMessage) {
+                            final String targetMessage,
+                            final String mode) {
         consumer.accept(target.getUniqueId());
         Bukkit.getScheduler().runTaskAsynchronously(super.getPlugin(), () -> {
             try (final Connection connection = super.getDatabase().getConnection()) {
@@ -76,6 +79,11 @@ public final class DisableAutoMessagesArgument extends Argument {
 
         sender.sendMessage(senderMessage.replace("{player}", target.getName()));
         target.sendMessage(targetMessage.replace("{player}", sender.getName()));
+
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[DISABLE-AUTO-MESSAGES] [" + sender.getName() + "] " + mode + "for " + target.getName()
+        );
+
         return true;
     }
 }

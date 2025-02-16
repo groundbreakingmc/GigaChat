@@ -25,6 +25,10 @@ public final class DisableServerChatArgument extends Argument {
             chatDisabled = true;
         }
 
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[DISABLE-CHAT] [" + sender.getName() + "] " + (chatDisabled ? "disabled" : "enabled")
+        );
+
         return true;
     }
 }

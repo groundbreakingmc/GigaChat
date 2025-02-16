@@ -66,18 +66,25 @@ public final class SpyArgument extends Argument {
         final String replacement = super.getMessages().getChatNames().getOrDefault(chatName, chatName);
         final String targetName = target.getName();
         final UUID targetUUID = target.getUniqueId();
+        final String mode;
 
         if (players.contains(targetUUID)) {
             sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", replacement));
             this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), replacement);
             players.remove(target.getUniqueId());
             this.processDatabase(targetUUID, Database.REMOVE_PLAYER_FROM_SOCIAL_SPY);
+            mode = "disabled";
         } else {
             sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", replacement));
             this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), replacement);
             players.add(target.getUniqueId());
             this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_SOCIAL_SPY);
+            mode = "enabled";
         }
+
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[SPY] [" + sender.getName() + "] " + mode + " spy in " + chat.getName() + " chat " + " for " + target.getName()
+        );
 
         return true;
     }

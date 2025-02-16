@@ -54,6 +54,10 @@ public final class SetPmSoundArgument extends Argument {
         this.sendPmSoundMessage(sender, target, sound, isSenderTarget, messageForTargetIsEmpty);
         this.updateDatabase(targetUUID, sound.name(), Database.ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS);
 
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[SET-PM-SOUND] [" + sender.getName() + "] set " + args[2] + " for " + target.getName()
+        );
+
         return true;
     }
 
@@ -71,6 +75,10 @@ public final class SetPmSoundArgument extends Argument {
         if (!messageForTargetIsEmpty) {
             target.sendMessage(super.getMessages().getPmSoundRemoved());
         }
+
+        super.getPlugin().getCommandLogger().log(() ->
+                "[SET-PM-SOUND] [" + sender.getName() + "] removed for " + target.getName()
+        );
     }
 
     private Sound getSoundOrNotify(final CommandSender sender, final String soundName) {

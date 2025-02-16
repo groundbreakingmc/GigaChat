@@ -7,6 +7,7 @@ import com.github.groundbreakingmc.gigachat.constructors.Hover;
 import com.github.groundbreakingmc.gigachat.utils.HoverUtils;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.ChatValues;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
@@ -104,6 +105,8 @@ public final class ChatListener implements Listener {
         if (chat.isNoOneHeard(sender, recipients)) {
             sender.sendMessage(this.messages.getNoOneHear());
         }
+
+        this.log(sender, chat, message);
     }
 
     private boolean isDisabled(final Player sender, final AsyncPlayerChatEvent event) {
@@ -241,5 +244,11 @@ public final class ChatListener implements Listener {
 
         message = this.chatValues.getChatsColorizer().colorize(sender, message);
         return formattedMessage.replace("{message}", message);
+    }
+
+    private void log(final Player sender, final Chat chat, final String message) {
+        this.plugin.getChatLogger().log(() ->
+                "[" + sender.getName() + " -> " + chat.getName() + "] " + ColorizerUtils.getClear(message)
+        );
     }
 }

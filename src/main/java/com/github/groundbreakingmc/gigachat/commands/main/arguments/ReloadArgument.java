@@ -19,9 +19,9 @@ public final class ReloadArgument extends Argument {
         final long startTime = System.currentTimeMillis();
 
         if (args.length == 1) {
-            this.reloadAll();
+            this.reloadAll(sender);
         } else {
-            this.reloadSpecified(args);
+            this.reloadSpecified(sender, args);
         }
 
         final String reloadTime = String.valueOf(System.currentTimeMillis() - startTime);
@@ -33,15 +33,19 @@ public final class ReloadArgument extends Argument {
         return true;
     }
 
-    private void reloadAll() {
+    private void reloadAll(final CommandSender sender) {
         super.getPlugin().getAutoMessages().cancel();
         super.getPlugin().reloadConfig();
         super.getPlugin().setupConfigValues();
         super.getPlugin().getCooldownCollections().setCooldowns();
         super.getPlugin().getAutoMessages().run();
+
+        super.getPlugin().getCommandLogger().log(() ->
+                "[RELOAD] [" + sender.getName() + "] all"
+        );
     }
 
-    private void reloadSpecified(final String[] args) {
+    private void reloadSpecified(final CommandSender sender, final String[] args) {
         for (final String arg : ImmutableSet.copyOf(args)) { // ImmutableSet needs to remove all duplicates
             if (arg.equalsIgnoreCase("auto-messages")) {
                 super.getPlugin().getAutoMessages().cancel();
@@ -70,5 +74,9 @@ public final class ReloadArgument extends Argument {
                 super.getPlugin().getPmValues().setValues();
             }
         }
+
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[RELOAD] [" + sender.getName() + "] " + String.join(", ", args)
+        );
     }
 }

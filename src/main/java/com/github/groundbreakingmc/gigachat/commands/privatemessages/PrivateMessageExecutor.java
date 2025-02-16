@@ -5,6 +5,7 @@ import com.github.groundbreakingmc.gigachat.collections.*;
 import com.github.groundbreakingmc.gigachat.database.Database;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PermissionColorizer;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PrivateMessagesColorizer;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
@@ -151,7 +152,8 @@ public final class PrivateMessageExecutor implements TabExecutor {
                     this.disabled::remove,
                     playerSender, senderUUID,
                     Database.REMOVE_PLAYER_FROM_DISABLED_PRIVATE_MESSAGES,
-                    this.messages.getPmDisabled()
+                    this.messages.getPmDisabled(),
+                    "enabled"
             );
         }
 
@@ -159,13 +161,15 @@ public final class PrivateMessageExecutor implements TabExecutor {
                 this.disabled::add,
                 playerSender, senderUUID,
                 Database.ADD_PLAYER_TO_DISABLED_PRIVATE_MESSAGES,
-                this.messages.getPmEnabled()
+                this.messages.getPmEnabled(),
+                "disabled"
         );
     }
 
     private boolean process(final Consumer<UUID> function,
                             final Player sender, final UUID senderUUID,
-                            final String query, final String message) {
+                            final String query, final String message,
+                            final String mode) {
         function.accept(senderUUID);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
@@ -174,7 +178,13 @@ public final class PrivateMessageExecutor implements TabExecutor {
                 ex.printStackTrace();
             }
         });
+
         sender.sendMessage(message);
+
+        this.plugin.getCommandLogger().log(() ->
+                "[PM] [" + sender.getName() + "] " + mode
+        );
+
         return true;
     }
 
@@ -292,6 +302,10 @@ public final class PrivateMessageExecutor implements TabExecutor {
 
         sender.sendMessage(formattedMessageForSender);
         recipient.sendMessage(formattedMessageForRecipient);
+
+        this.plugin.getPmLogger().log(() ->
+                "[PM] [" + sender.getName() + " -> " + recipient.getName() + "] " + ColorizerUtils.getClear(message)
+        );
 
         this.playSound(recipient);
     }

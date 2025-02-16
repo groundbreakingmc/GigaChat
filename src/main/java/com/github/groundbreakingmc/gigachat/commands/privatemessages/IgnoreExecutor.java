@@ -107,6 +107,7 @@ public final class IgnoreExecutor implements TabExecutor {
                             ? Database.REMOVE_PLAYER_FROM_IGNORE_CHAT
                             : Database.REMOVE_IGNORED_FROM_IGNORE_CHAT,
                     this.messages.getChatIgnoreDisabled(),
+                    "unignored",
                     IgnoreCollections.isIgnoredPrivateEmpty()
                             ? new Object[]{senderUUID.toString()}
                             : new Object[]{senderUUID.toString(), targetUUID.toString()}
@@ -120,6 +121,7 @@ public final class IgnoreExecutor implements TabExecutor {
                 target, targetUUID,
                 Database.ADD_PLAYER_TO_IGNORE_CHAT,
                 this.messages.getChatIgnoreEnabled(),
+                "ignored",
                 senderUUID.toString(), targetUUID.toString()
         );
     }
@@ -135,6 +137,7 @@ public final class IgnoreExecutor implements TabExecutor {
                             ? Database.REMOVE_PLAYER_FROM_IGNORE_PRIVATE_PRIVATE
                             : Database.REMOVE_IGNORED_PLAYER_FROM_IGNORE_PRIVATE,
                     this.messages.getPrivateIgnoreDisabled(),
+                    "unignored",
                     IgnoreCollections.isIgnoredPrivateEmpty()
                             ? new Object[]{senderUUID.toString()}
                             : new Object[]{senderUUID.toString(), targetUUID.toString()}
@@ -147,6 +150,7 @@ public final class IgnoreExecutor implements TabExecutor {
                 target, targetUUID,
                 Database.ADD_PLAYER_TO_IGNORE_PRIVATE,
                 this.messages.getPrivateIgnoreEnabled(),
+                "ignored",
                 senderUUID.toString(), targetUUID.toString()
         );
     }
@@ -156,6 +160,7 @@ public final class IgnoreExecutor implements TabExecutor {
             final Player sender, final UUID senderUUID,
             final Player target, final UUID targetUUID,
             final String query, final String message,
+            final String mode,
             final Object... queryParams) {
         consumer.accept(senderUUID, targetUUID);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
@@ -168,6 +173,10 @@ public final class IgnoreExecutor implements TabExecutor {
 
         sender.sendMessage(message.replace("{player}", target.getName()));
         this.cooldownCollections.addCooldown(senderUUID, this.cooldownCollections.getIgnoreCooldowns());
+
+        this.plugin.getCommandLogger().log(() ->
+                "[IGNORE] [" + sender.getName() + "] " + mode + " " + target.getName()
+        );
     }
 
     @Override

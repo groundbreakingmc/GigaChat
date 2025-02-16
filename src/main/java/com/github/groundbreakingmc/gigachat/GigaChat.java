@@ -12,6 +12,7 @@ import com.github.groundbreakingmc.gigachat.listeners.DisconnectListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieChatListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieCommandListener;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.*;
+import com.github.groundbreakingmc.gigachat.utils.logging.FileLogger;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.colorizer.LegacyColorizer;
 import com.github.groundbreakingmc.mylib.colorizer.VanillaColorizer;
@@ -65,6 +66,12 @@ public final class GigaChat extends JavaPlugin {
 
     private final UpdatesChecker updatesChecker;
 
+    private final FileLogger chatLogger;
+    private final FileLogger pmLogger;
+    private final FileLogger commandLogger;
+    private final FileLogger pluginCommandLogger;
+    private final FileLogger exceptionLogger;
+
     public GigaChat() {
         if (!ServerInfo.isPaperOrFork()) {
             throw new NotPaperException(this);
@@ -104,6 +111,11 @@ public final class GigaChat extends JavaPlugin {
         this.newbieChatListener = new NewbieChatListener(this);
         this.autoMessages = new AutoMessages(this);
         this.pmSoundsCollection = new PmSoundsCollection();
+        this.chatLogger = new FileLogger(this, "chat");
+        this.pmLogger = new FileLogger(this, "pm");
+        this.commandLogger = new FileLogger(this, "command");
+        this.pluginCommandLogger = new FileLogger(this, "plugin-command");
+        this.exceptionLogger = new FileLogger(this, "error"); // for future
     }
 
     @Override

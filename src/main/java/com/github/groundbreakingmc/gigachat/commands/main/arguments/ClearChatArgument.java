@@ -30,6 +30,9 @@ public final class ClearChatArgument extends Argument {
         }
 
         sender.sendMessage(super.getMessages().getChatHasBeenCleared());
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[CLEAR-CHAT] [" + sender.getName() + "]"
+        );
         return true;
     }
 }

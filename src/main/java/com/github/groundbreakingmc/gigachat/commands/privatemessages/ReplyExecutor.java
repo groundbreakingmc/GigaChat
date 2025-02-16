@@ -4,6 +4,7 @@ import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.gigachat.collections.*;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
@@ -108,6 +109,11 @@ public final class ReplyExecutor implements TabExecutor {
         recipient.sendMessage(formattedMessageForRecipient);
 
         this.playSound(recipient);
+
+        this.plugin.getPmLogger().log(() ->
+                "[PM-REPLY] [" + sender.getName() + " -> " + recipient.getName() + "] " + ColorizerUtils.getClear(message)
+        );
+
         return true;
     }
 

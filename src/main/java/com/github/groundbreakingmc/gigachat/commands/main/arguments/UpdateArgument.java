@@ -21,6 +21,11 @@ public final class UpdateArgument extends Argument {
         }
 
         final UpdatesChecker updatesChecker = super.getPlugin().getUpdatesChecker();
+
+        super.getPlugin().getPluginCommandLogger().log(() ->
+                "[UPDATE] [CONSOLE] has update: " + updatesChecker.hasUpdate()
+        );
+
         if (!updatesChecker.hasUpdate()) {
             sender.sendMessage("§4[GigaChat] §cNothing to update!");
             return true;
@@ -29,6 +34,7 @@ public final class UpdateArgument extends Argument {
         super.getPlugin().getServer().getScheduler().runTaskAsynchronously(super.getPlugin(), () ->
                 updatesChecker.downloadJar(true)
         );
+
         return true;
     }
 }

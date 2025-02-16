@@ -66,7 +66,8 @@ public final class SocialSpyExecutor implements TabExecutor {
                     SocialSpyCollection::remove,
                     sender, senderUUID,
                     Database.REMOVE_PLAYER_FROM_SOCIAL_SPY,
-                    this.messages.getSpyDisabled()
+                    this.messages.getSpyDisabled(),
+                    "disabled"
             );
             return;
         }
@@ -75,7 +76,8 @@ public final class SocialSpyExecutor implements TabExecutor {
                 SocialSpyCollection::add,
                 sender, senderUUID,
                 Database.ADD_PLAYER_TO_SOCIAL_SPY,
-                this.messages.getSpyEnabled()
+                this.messages.getSpyEnabled(),
+                "enabled"
         );
     }
 
@@ -94,7 +96,8 @@ public final class SocialSpyExecutor implements TabExecutor {
     private boolean process(
             final Consumer<UUID> consumer,
             final Player sender, final UUID senderUUID,
-            final String query, final String message) {
+            final String query, final String message,
+            final String mode) {
         consumer.accept(senderUUID);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
@@ -105,6 +108,11 @@ public final class SocialSpyExecutor implements TabExecutor {
         });
 
         this.sendMessage(sender, message);
+
+        this.plugin.getCommandLogger().log(() ->
+                "[SOCIAL-SPY] [" + sender.getName() + "] " + mode
+        );
+
         return true;
     }
 

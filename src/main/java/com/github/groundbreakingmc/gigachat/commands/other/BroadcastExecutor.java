@@ -5,6 +5,7 @@ import com.github.groundbreakingmc.gigachat.collections.CooldownCollections;
 import com.github.groundbreakingmc.gigachat.constructors.Hover;
 import com.github.groundbreakingmc.gigachat.utils.HoverUtils;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PermissionColorizer;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.BroadcastValues;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
@@ -78,6 +79,10 @@ public final class BroadcastExecutor implements TabExecutor {
         }
 
         this.consoleCommandSender.sendMessage(message);
+
+        this.plugin.getCommandLogger().log(() ->
+                "[BROADCAST] [" + sender.getName() + "] " + ColorizerUtils.getClear(message)
+        );
 
         return true;
     }
