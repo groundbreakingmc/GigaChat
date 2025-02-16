@@ -51,7 +51,7 @@ sender-ignores-himself: "&cВы не можете написать игроку 
 has-disabled-private-messages: "&cУ этого игрока отключены приватные сообщения!"
 
 socialspy-enabled: "&aТеперь вы прослушиваете личные сообщения!"
-socialspy-disabled: "&aВы больше не прослушиваете личные сообщения!"
+socialspy-disabled: "&cВы больше не прослушиваете личные сообщения!"
 
 # {player} - ник указанного игрока
 chat-ignore-enabled: "&cВы больше не будете получать сообщения в чате от {player}."
