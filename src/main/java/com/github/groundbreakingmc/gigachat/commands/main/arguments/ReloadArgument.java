@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 public final class ReloadArgument extends Argument {
 
     public ReloadArgument(final GigaChat plugin) {
@@ -21,7 +23,7 @@ public final class ReloadArgument extends Argument {
         if (args.length == 1) {
             this.reloadAll(sender);
         } else {
-            this.reloadSpecified(sender, args);
+            this.reloadSpecified(sender, Arrays.copyOfRange(args, 1, args.length));
         }
 
         final String reloadTime = String.valueOf(System.currentTimeMillis() - startTime);
@@ -40,7 +42,7 @@ public final class ReloadArgument extends Argument {
         super.getPlugin().getCooldownCollections().setCooldowns();
         super.getPlugin().getAutoMessages().run();
 
-        super.getPlugin().getCommandLogger().log(() ->
+        super.getPlugin().getPluginCommandLogger().log(() ->
                 "[RELOAD] [" + sender.getName() + "] all"
         );
     }

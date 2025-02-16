@@ -21,6 +21,8 @@ public final class ColorizerUtils {
             result.append(current);
         }
 
+        result.append(message.charAt(message.length() - 1));
+
         return result.toString();
     }
 

@@ -76,7 +76,7 @@ public final class SetPmSoundArgument extends Argument {
             target.sendMessage(super.getMessages().getPmSoundRemoved());
         }
 
-        super.getPlugin().getCommandLogger().log(() ->
+        super.getPlugin().getPluginCommandLogger().log(() ->
                 "[SET-PM-SOUND] [" + sender.getName() + "] removed for " + target.getName()
         );
     }

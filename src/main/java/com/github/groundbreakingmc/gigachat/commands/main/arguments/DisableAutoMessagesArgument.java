@@ -81,7 +81,7 @@ public final class DisableAutoMessagesArgument extends Argument {
         target.sendMessage(targetMessage.replace("{player}", sender.getName()));
 
         super.getPlugin().getPluginCommandLogger().log(() ->
-                "[DISABLE-AUTO-MESSAGES] [" + sender.getName() + "] " + mode + "for " + target.getName()
+                "[DISABLE-AUTO-MESSAGES] [" + sender.getName() + "] " + mode + " for " + target.getName()
         );
 
         return true;

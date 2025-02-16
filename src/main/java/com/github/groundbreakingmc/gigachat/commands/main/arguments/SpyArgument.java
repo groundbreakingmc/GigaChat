@@ -83,7 +83,7 @@ public final class SpyArgument extends Argument {
         }
 
         super.getPlugin().getPluginCommandLogger().log(() ->
-                "[SPY] [" + sender.getName() + "] " + mode + " spy in " + chat.getName() + " chat " + " for " + target.getName()
+                "[SPY] [" + sender.getName() + "] " + mode + " spy in " + chat.getName() + " chat for " + target.getName()
         );
 
         return true;

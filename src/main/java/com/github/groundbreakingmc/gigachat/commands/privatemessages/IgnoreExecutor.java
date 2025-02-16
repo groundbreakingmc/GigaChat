@@ -103,12 +103,12 @@ public final class IgnoreExecutor implements TabExecutor {
                     IgnoreCollections::removeFromIgnoredChat,
                     sender, senderUUID,
                     target, targetUUID,
-                    IgnoreCollections.isIgnoredPrivateEmpty()
+                    IgnoreCollections.isIgnoredChatEmpty()
                             ? Database.REMOVE_PLAYER_FROM_IGNORE_CHAT
                             : Database.REMOVE_IGNORED_FROM_IGNORE_CHAT,
                     this.messages.getChatIgnoreDisabled(),
                     "unignored",
-                    IgnoreCollections.isIgnoredPrivateEmpty()
+                    IgnoreCollections.isIgnoredChatEmpty()
                             ? new Object[]{senderUUID.toString()}
                             : new Object[]{senderUUID.toString(), targetUUID.toString()}
             );
@@ -142,6 +142,7 @@ public final class IgnoreExecutor implements TabExecutor {
                             ? new Object[]{senderUUID.toString()}
                             : new Object[]{senderUUID.toString(), targetUUID.toString()}
             );
+            return;
         }
 
         this.process(

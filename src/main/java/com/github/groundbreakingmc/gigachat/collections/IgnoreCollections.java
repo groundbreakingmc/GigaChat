@@ -1,20 +1,18 @@
 package com.github.groundbreakingmc.gigachat.collections;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import lombok.experimental.UtilityClass;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@UtilityClass
 public final class IgnoreCollections {
 
     private static final Map<UUID, Set<UUID>> ignoredChat = new Object2ObjectOpenHashMap<>();
     private static final Map<UUID, Set<UUID>> ignoredPrivate = new Object2ObjectOpenHashMap<>();
-
-    private IgnoreCollections() {
-
-    }
 
     public static boolean isIgnoredChatEmpty() {
         return ignoredChat.isEmpty();
@@ -90,11 +88,21 @@ public final class IgnoreCollections {
     }
 
     public static void removeFromIgnoredChat(final UUID searchUuid, final UUID targetUuid) {
-        ignoredChat.get(searchUuid).remove(targetUuid);
+        final Set<UUID> temp = ignoredChat.get(searchUuid);
+        if (temp == null || temp.isEmpty()) {
+            return;
+        }
+
+        temp.remove(targetUuid);
     }
 
     public static void removeFromIgnoredPrivate(final UUID searchUuid, final UUID targetUuid) {
-        ignoredPrivate.get(searchUuid).remove(targetUuid);
+        final Set<UUID> temp = ignoredPrivate.get(searchUuid);
+        if (temp == null || temp.isEmpty()) {
+            return;
+        }
+
+        temp.remove(targetUuid);
     }
 
     public static boolean isIgnoredChat(final UUID searchUuid, final UUID targetUuid) {
