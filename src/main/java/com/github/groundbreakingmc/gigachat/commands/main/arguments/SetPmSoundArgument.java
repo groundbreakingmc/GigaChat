@@ -51,8 +51,8 @@ public final class SetPmSoundArgument extends Argument {
         }
 
         this.pmSoundsCollection.setSound(targetUUID, sound);
-        sendPmSoundMessage(sender, target, sound, isSenderTarget, messageForTargetIsEmpty);
-        updateDatabase(targetUUID, sound.name(), Database.ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS);
+        this.sendPmSoundMessage(sender, target, sound, isSenderTarget, messageForTargetIsEmpty);
+        this.updateDatabase(targetUUID, sound.name(), Database.ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS);
 
         return true;
     }
@@ -62,7 +62,7 @@ public final class SetPmSoundArgument extends Argument {
                                       final boolean isSenderTarget,
                                       final boolean messageForTargetIsEmpty) {
         this.pmSoundsCollection.remove(targetUUID);
-        updateDatabase(targetUUID, null, Database.REMOVE_PLAYER_FROM_PRIVATE_MESSAGES_SOUNDS);
+        this.updateDatabase(targetUUID, null, Database.REMOVE_PLAYER_FROM_PRIVATE_MESSAGES_SOUNDS);
 
         if (!isSenderTarget || !messageForTargetIsEmpty) {
             sender.sendMessage(super.getMessages().getTargetPmSoundRemoved().replace("{player}", target.getName()));
@@ -76,15 +76,15 @@ public final class SetPmSoundArgument extends Argument {
     private Sound getSoundOrNotify(final CommandSender sender, final String soundName) {
         try {
             return Sound.valueOf(soundName);
-        } catch (IllegalArgumentException ex) {
+        } catch (final IllegalArgumentException ex) {
             sender.sendMessage(super.getMessages().getSoundNotFound());
             return null;
         }
     }
 
     private void sendPmSoundMessage(final CommandSender sender, final Player target,
-                                    final Sound sound, boolean isSenderTarget,
-                                    boolean messageForTargetIsEmpty) {
+                                    final Sound sound, final boolean isSenderTarget,
+                                    final boolean messageForTargetIsEmpty) {
         if (!isSenderTarget || !messageForTargetIsEmpty) {
             sender.sendMessage(super.getMessages().getTargetPmSoundSet()
                     .replace("{player}", target.getName())
