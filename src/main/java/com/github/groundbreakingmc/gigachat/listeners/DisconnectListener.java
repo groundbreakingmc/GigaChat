@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -44,14 +45,12 @@ public final class DisconnectListener implements Listener {
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
-        final UUID playerUUID = event.getPlayer().getUniqueId();
-        this.removeData(playerUUID);
+        this.removeData(event);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onKick(final PlayerKickEvent event) {
-        final UUID playerUUID = event.getPlayer().getUniqueId();
-        this.removeData(playerUUID);
+        this.removeData(event);
     }
 
     private void loadData(final UUID playerUUID) {
@@ -106,7 +105,8 @@ public final class DisconnectListener implements Listener {
         }
     }
 
-    private void removeData(final UUID playerUUID) {
+    private void removeData(final PlayerEvent event) {
+        final UUID playerUUID = event.getPlayer().getUniqueId();
         DisabledChatCollection.remove(playerUUID);
         this.disabledPrivateMessagesCollection.remove(playerUUID);
         IgnoreCollections.removeFromIgnoredChat(playerUUID);
@@ -115,5 +115,8 @@ public final class DisconnectListener implements Listener {
         ReplyCollection.removeFromAll(playerUUID);
         SocialSpyCollection.remove(playerUUID);
         AutoMessagesCollection.remove(playerUUID);
+        for (final Map.Entry<Character, Chat> entry : this.chatValues.getChats().entrySet()) {
+            entry.getValue().getSpyListeners().remove(playerUUID);
+        }
     }
 }
