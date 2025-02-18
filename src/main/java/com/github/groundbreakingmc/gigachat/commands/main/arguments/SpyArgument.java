@@ -61,23 +61,23 @@ public final class SpyArgument extends Argument {
     }
 
     private boolean process(final CommandSender sender, final Player target, final Chat chat) {
-        final Set<UUID> players = chat.getSpyListeners();
+        final Set<Player> players = chat.getSpyListeners();
         final String chatName = chat.getName();
         final String replacement = super.getMessages().getChatNames().getOrDefault(chatName, chatName);
         final String targetName = target.getName();
         final UUID targetUUID = target.getUniqueId();
         final String mode;
 
-        if (players.contains(targetUUID)) {
+        if (players.contains(target)) {
             sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", replacement));
             this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), replacement);
-            players.remove(target.getUniqueId());
+            players.remove(target);
             this.processDatabase(targetUUID, Database.REMOVE_PLAYER_FROM_SOCIAL_SPY);
             mode = "disabled";
         } else {
             sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", replacement));
             this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), replacement);
-            players.add(target.getUniqueId());
+            players.add(target);
             this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_SOCIAL_SPY);
             mode = "enabled";
         }
