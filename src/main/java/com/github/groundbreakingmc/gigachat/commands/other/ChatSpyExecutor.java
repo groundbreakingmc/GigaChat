@@ -50,7 +50,7 @@ public class ChatSpyExecutor {
         }
 
         final String chatName = chat.getName();
-        final Set<UUID> players = chat.getSpyListeners();
+        final Set<Player> players = chat.getSpyListeners();
 
         if (players.contains(senderUUID)) {
             return this.process(
@@ -76,13 +76,13 @@ public class ChatSpyExecutor {
     }
 
     private boolean process(
-            final Consumer<UUID> consumer,
+            final Consumer<Player> consumer,
             final Player sender, final UUID senderUUID,
             final String query, final String chatName, final String message,
             final String mode) {
         final String chatNameReplacement = this.messages.getChatNames().getOrDefault(chatName, chatName);
 
-        consumer.accept(senderUUID);
+        consumer.accept(sender);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
                 this.database.executeUpdateQuery(query, connection, senderUUID.toString(), chatName);
