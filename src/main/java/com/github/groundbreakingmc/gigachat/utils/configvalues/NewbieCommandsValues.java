@@ -75,16 +75,20 @@ public final class NewbieCommandsValues {
                 );
             }
 
-            this.counter = settings.getBoolean("count-time-from-first-join") ? new FirstEntryCounter() : new OnlineTimeCounter();
+            this.counter = settings.getBoolean("count-time-from-first-join")
+                    ? new FirstEntryCounter() : new OnlineTimeCounter();
             this.requiredTime = settings.getInt("required-time");
-            this.isGiveBypassPermissionEnabled = settings.getBoolean("if-reached.give-permission");
-            this.requiredTimeToGetBypassPerm = settings.getInt("if-reached.required-time");
+
+            final ConfigurationSection reached = settings.getConfigurationSection("if-reached");
+            this.isGiveBypassPermissionEnabled = reached.getBoolean("if-reached.give-permission");
+            this.requiredTimeToGetBypassPerm = reached.getInt("if-reached.required-time");
 
             final Colorizer colorizer = ColorizerFactory.createColorizer(settings.getString("colorizer-mode"));
             this.denyMessage = colorizer.colorize(settings.getString("deny-message"));
 
             final String soundString = settings.getString("deny-sound");
-            this.denySound = soundString == null || soundString.equalsIgnoreCase("disable") ? null : SoundSettings.get(soundString);
+            this.denySound = soundString == null || soundString.equalsIgnoreCase("disable")
+                    ? null : SoundSettings.get(soundString);
 
             this.blockedCommands.clear();
             this.blockedCommands.addAll(settings.getStringList("blocked-commands"));

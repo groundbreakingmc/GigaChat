@@ -7,6 +7,7 @@ import com.github.groundbreakingmc.gigachat.utils.counter.FirstEntryCounter;
 import com.github.groundbreakingmc.gigachat.utils.counter.OnlineTimeCounter;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.colorizer.ColorizerFactory;
+import com.github.groundbreakingmc.mylib.config.ConfigLoader;
 import com.github.groundbreakingmc.mylib.utils.event.ListenerRegisterUtil;
 import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import lombok.AccessLevel;
@@ -38,7 +39,7 @@ public final class NewbieChatValues {
     }
 
     public void setValues() {
-        final FileConfiguration config = com.github.groundbreakingmc.mylib.config.ConfigLoader.builder(this.plugin, this.plugin.getCustomLogger())
+        final FileConfiguration config = ConfigLoader.builder(this.plugin, this.plugin.getCustomLogger())
                 .fileName("newbie-chat.yml")
                 .fileVersion(1.0)
                 .fileVersionPath("settings.config-version")
@@ -70,16 +71,20 @@ public final class NewbieChatValues {
                 );
             }
 
-            this.counter = settings.getBoolean("count-time-from-first-join") ? new FirstEntryCounter() : new OnlineTimeCounter();
+            this.counter = settings.getBoolean("count-time-from-first-join")
+                    ? new FirstEntryCounter() : new OnlineTimeCounter();
             this.requiredTime = settings.getInt("required-time");
-            this.isGiveBypassPermissionEnabled = settings.getBoolean("if-reached.give-permission");
-            this.requiredTimeToGetBypassPerm = settings.getInt("if-reached.required-time");
+
+            final ConfigurationSection reached = settings.getConfigurationSection("if-reached");
+            this.isGiveBypassPermissionEnabled = reached.getBoolean("if-reached.give-permission");
+            this.requiredTimeToGetBypassPerm = reached.getInt("if-reached.required-time");
 
             final Colorizer colorizer = ColorizerFactory.createColorizer(settings.getString("colorizer-mode"));
             this.denyMessage = colorizer.colorize(settings.getString("deny-message"));
 
             final String soundString = settings.getString("deny-sound");
-            this.denySound = soundString == null || soundString.equalsIgnoreCase("disable") ? null : SoundSettings.get(soundString);
+            this.denySound = soundString == null || soundString.equalsIgnoreCase("disable")
+                    ? null : SoundSettings.get(soundString);
         } else {
             ListenerRegisterUtil.unregister(newbieChatListener);
         }

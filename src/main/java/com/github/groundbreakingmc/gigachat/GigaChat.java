@@ -165,7 +165,7 @@ public final class GigaChat extends JavaPlugin {
         this.broadcastValues.setupValues();
         this.chatValues.setupValues();
         final PluginManager pluginManager = super.getServer().getPluginManager();
-        if (pluginManager.getPlugin("NewbieGuard") != null) {
+        if (pluginManager.getPlugin("NewbieGuard") == null) {
             this.newbieChatValues.setValues();
             this.newbieCommandsValues.setValues();
         } else {
