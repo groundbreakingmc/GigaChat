@@ -73,8 +73,10 @@ public final class ChatListener implements Listener {
             final Set<Player> spyListeners = chat.getSpyListeners();
             if (!spyListeners.isEmpty()) {
                 final Set<Player> spyListenersCopy = new HashSet<>(spyListeners);
-                spyListenersCopy.remove(sender);
-                this.sendSpy(sender, chat, message, spyFormat, recipients, spyListenersCopy, prefix, suffix, color);
+                spyListenersCopy.removeAll(recipients);
+                if (!spyListenersCopy.isEmpty()) {
+                    this.sendSpy(sender, chat, message, spyFormat, spyListenersCopy, prefix, suffix, color);
+                }
             }
         }
 
@@ -199,21 +201,18 @@ public final class ChatListener implements Listener {
 
     private void sendSpy(final Player sender, final Chat chat,
                          final String message, final String spyFormat,
-                         final Set<Player> recipients,
                          final Set<Player> spyRecipients,
                          final String prefix, final String suffix, final String color) {
         final String formattedMessage = this.getFormattedMessage(sender, message, spyFormat, prefix, suffix, color);
 
         final Hover hover = chat.getHover();
         if (hover.isEnabled()) {
-            this.sendHover(sender, formattedMessage, hover, recipients, prefix, suffix, color);
+            this.sendHover(sender, formattedMessage, hover, spyRecipients, prefix, suffix, color);
             return;
         }
 
         for (final Player recipient : spyRecipients) {
-            if (!recipients.contains(recipient)) {
-                recipient.sendMessage(formattedMessage);
-            }
+            recipient.sendMessage(formattedMessage);
         }
     }
 

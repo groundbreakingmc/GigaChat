@@ -69,14 +69,22 @@ public final class SpyArgument extends Argument {
         final String mode;
 
         if (players.contains(target)) {
-            sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", replacement));
-            this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), replacement);
+            if (sender != target) {
+                sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", replacement));
+                this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), replacement);
+            } else {
+                sender.sendMessage(super.getMessages().getChatsSpyDisabled());
+            }
             players.remove(target);
             this.processDatabase(targetUUID, Database.REMOVE_PLAYER_FROM_SOCIAL_SPY);
             mode = "disabled";
         } else {
-            sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", replacement));
-            this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), replacement);
+            if (sender != target) {
+                sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", replacement));
+                this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), replacement);
+            } else {
+                sender.sendMessage(super.getMessages().getChatsSpyEnabled());
+            }
             players.add(target);
             this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_SOCIAL_SPY);
             mode = "enabled";

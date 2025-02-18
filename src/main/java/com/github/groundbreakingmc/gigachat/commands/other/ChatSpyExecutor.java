@@ -52,7 +52,7 @@ public class ChatSpyExecutor {
         final String chatName = chat.getName();
         final Set<Player> players = chat.getSpyListeners();
 
-        if (players.contains(senderUUID)) {
+        if (players.contains(sender)) {
             return this.process(
                     players::remove,
                     playerSender,
