@@ -116,7 +116,7 @@ public final class IgnoreExecutor implements TabExecutor {
         }
 
         this.process(
-                IgnoreCollections::removeFromIgnoredChat,
+                IgnoreCollections::addToIgnoredChat,
                 sender, senderUUID,
                 target, targetUUID,
                 Database.ADD_PLAYER_TO_IGNORE_CHAT,

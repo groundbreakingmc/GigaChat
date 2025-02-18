@@ -29,7 +29,7 @@ public final class Database extends com.github.groundbreakingmc.mylib.database.D
     /**
      * Adds the player name to the "ignoreChat" table, to save the player's choice
      */
-    public static final String ADD_PLAYER_TO_IGNORE_CHAT = "INSERT OR IGNORE INTO ignoreChat(playerUUID, ignored) VALUES(?, ?);";
+    public static final String ADD_PLAYER_TO_IGNORE_CHAT = "INSERT OR IGNORE INTO ignoreChat(playerUUID, ignoredUUID) VALUES(?, ?);";
 
     /**
      * Removes the player's name from the "ignoreChat" table
@@ -64,7 +64,7 @@ public final class Database extends com.github.groundbreakingmc.mylib.database.D
     /**
      * Adds the player name to the "ignorePrivate" table, to save the player's choice
      */
-    public static final String ADD_PLAYER_TO_IGNORE_PRIVATE = "SELECT EXISTS(SELECT 1 FROM disabledPrivateMessages WHERE playerUUID = ?);";
+    public static final String ADD_PLAYER_TO_IGNORE_PRIVATE = "INSERT OR IGNORE INTO ignorePrivate(playerUUID, ignoredUUID) VALUES(?, ?);";
 
     /**
      * Removes the player's name from the "ignorePrivate" table

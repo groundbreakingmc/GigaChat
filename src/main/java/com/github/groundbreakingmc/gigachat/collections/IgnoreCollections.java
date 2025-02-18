@@ -89,8 +89,12 @@ public final class IgnoreCollections {
 
     public static void removeFromIgnoredChat(final UUID searchUuid, final UUID targetUuid) {
         final Set<UUID> temp = ignoredChat.get(searchUuid);
-        if (temp == null || temp.isEmpty()) {
+        if (temp == null) {
             return;
+        }
+
+        if (temp.isEmpty()) {
+            ignoredChat.remove(searchUuid);
         }
 
         temp.remove(targetUuid);
@@ -98,27 +102,50 @@ public final class IgnoreCollections {
 
     public static void removeFromIgnoredPrivate(final UUID searchUuid, final UUID targetUuid) {
         final Set<UUID> temp = ignoredPrivate.get(searchUuid);
-        if (temp == null || temp.isEmpty()) {
+        if (temp == null) {
             return;
+        }
+
+        if (temp.isEmpty()) {
+            ignoredPrivate.remove(searchUuid);
         }
 
         temp.remove(targetUuid);
     }
 
     public static boolean isIgnoredChat(final UUID searchUuid, final UUID targetUuid) {
-        if (ignoredChat.isEmpty() || !ignoredChat.containsKey(searchUuid)) {
+        if (ignoredChat.isEmpty()) {
             return false;
         }
 
-        return ignoredChat.get(searchUuid).contains(targetUuid);
+        final Set<UUID> ignored = ignoredChat.get(searchUuid);
+        if (ignored == null) {
+            return false;
+        }
+
+        if (ignored.isEmpty()) {
+            ignoredChat.remove(searchUuid);
+            return false;
+        }
+
+        return ignored.contains(targetUuid);
     }
 
     public static boolean isIgnoredPrivate(final UUID searchUuid, final UUID targetUuid) {
-        if (ignoredPrivate.isEmpty() || !ignoredPrivate.containsKey(searchUuid)) {
-            ignoredPrivate.put(searchUuid, new HashSet<>());
+        if (ignoredPrivate.isEmpty()) {
             return false;
         }
 
-        return ignoredPrivate.get(searchUuid).contains(targetUuid);
+        final Set<UUID> ignored = ignoredPrivate.get(searchUuid);
+        if (ignored == null) {
+            return false;
+        }
+
+        if (ignored.isEmpty()) {
+            ignoredPrivate.remove(searchUuid);
+            return false;
+        }
+
+        return ignored.contains(targetUuid);
     }
 }
