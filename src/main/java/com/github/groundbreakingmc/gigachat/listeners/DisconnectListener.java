@@ -7,6 +7,7 @@ import com.github.groundbreakingmc.gigachat.database.Database;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.ChatValues;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
@@ -39,8 +40,7 @@ public final class DisconnectListener implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        final UUID playerUUID = event.getPlayer().getUniqueId();
-        this.loadData(playerUUID);
+        this.loadData(event.getPlayer());
     }
 
     @EventHandler
@@ -53,7 +53,8 @@ public final class DisconnectListener implements Listener {
         this.removeData(event);
     }
 
-    private void loadData(final UUID playerUUID) {
+    private void loadData(final Player player) {
+        final UUID playerUUID = player.getUniqueId();
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (final Connection connection = this.database.getConnection()) {
                 if (this.database.containsInTable(Database.DISABLED_CHAT_CONTAINS_PLAYER, connection, playerUUID)) {
@@ -82,20 +83,21 @@ public final class DisconnectListener implements Listener {
                     AutoMessagesCollection.add(playerUUID);
                 }
 
-                this.loadPlayerListenData(connection, playerUUID);
-            } catch(final SQLException ex) {
+                this.loadPlayerListenData(connection, player);
+            } catch (final SQLException ex) {
                 ex.printStackTrace();
             }
         });
     }
 
-    private void loadPlayerListenData(final Connection connection, final UUID playerUUID) throws SQLException {
+    private void loadPlayerListenData(final Connection connection, final Player player) throws SQLException {
+        final UUID playerUUID = player.getUniqueId();
         final List<String> chatsWherePlayerListen = this.database.getChatsWherePlayerIsListening(connection, playerUUID);
         final Map<Character, Chat> chats = this.chatValues.getChats();
         for (final Map.Entry<Character, Chat> entry : chats.entrySet()) {
             final Chat chat = entry.getValue();
             if (chatsWherePlayerListen.contains(chat.getName())) {
-                chat.getSpyListeners().add(playerUUID);
+                chat.getSpyListeners().add(player);
                 chatsWherePlayerListen.remove(chat.getName());
             }
         }
@@ -116,7 +118,7 @@ public final class DisconnectListener implements Listener {
         SocialSpyCollection.remove(playerUUID);
         AutoMessagesCollection.remove(playerUUID);
         for (final Map.Entry<Character, Chat> entry : this.chatValues.getChats().entrySet()) {
-            entry.getValue().getSpyListeners().remove(playerUUID);
+            entry.getValue().getSpyListeners().remove(event.getPlayer());
         }
     }
 }

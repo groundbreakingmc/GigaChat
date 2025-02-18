@@ -13,7 +13,6 @@ import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public final class ChatListener implements Listener {
 
@@ -73,11 +70,11 @@ public final class ChatListener implements Listener {
 
         final String spyFormat = chat.getSpyFormat();
         if (spyFormat != null && !spyFormat.isEmpty()) {
-            final Set<UUID> spyListenersUUIDs = chat.getSpyListeners();
-            if (!spyListenersUUIDs.isEmpty()) {
-                final Set<Player> spyListeners = spyListenersUUIDs.stream().map(Bukkit::getPlayer).collect(Collectors.toSet());
-                spyListeners.remove(sender);
-                this.sendSpy(sender, chat, message, spyFormat, spyListeners, prefix, suffix, color);
+            final Set<Player> spyListeners = chat.getSpyListeners();
+            if (!spyListeners.isEmpty()) {
+                final Set<Player> spyListenersCopy = new HashSet<>(spyListeners);
+                spyListenersCopy.remove(sender);
+                this.sendSpy(sender, chat, message, spyFormat, recipients, spyListenersCopy, prefix, suffix, color);
             }
         }
 
@@ -203,6 +200,7 @@ public final class ChatListener implements Listener {
     private void sendSpy(final Player sender, final Chat chat,
                          final String message, final String spyFormat,
                          final Set<Player> recipients,
+                         final Set<Player> spyRecipients,
                          final String prefix, final String suffix, final String color) {
         final String formattedMessage = this.getFormattedMessage(sender, message, spyFormat, prefix, suffix, color);
 
@@ -212,8 +210,10 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        for (final Player recipient : recipients) {
-            recipient.sendMessage(formattedMessage);
+        for (final Player recipient : spyRecipients) {
+            if (!recipients.contains(recipient)) {
+                recipient.sendMessage(formattedMessage);
+            }
         }
     }
 

@@ -42,7 +42,7 @@ public final class Chat implements TabExecutor {
     private final Map<String, String> groupColors;
     private final ExpiringMap<UUID, Long> chatCooldowns;
     private final ExpiringMap<UUID, Long> spyCooldowns;
-    private final Set<UUID> spyListeners;
+    private final Set<Player> spyListeners;
     private final ChatSpyExecutor chatSpyExecutor;
 
     public Chat(
