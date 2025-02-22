@@ -12,14 +12,14 @@ import com.github.groundbreakingmc.gigachat.listeners.DisconnectListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieChatListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieCommandListener;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.*;
-import com.github.groundbreakingmc.gigachat.utils.logging.FileLogger;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.colorizer.LegacyColorizer;
 import com.github.groundbreakingmc.mylib.colorizer.VanillaColorizer;
-import com.github.groundbreakingmc.mylib.logger.LegacyLogger;
-import com.github.groundbreakingmc.mylib.logger.Logger;
-import com.github.groundbreakingmc.mylib.logger.LoggerFactory;
-import com.github.groundbreakingmc.mylib.logger.ModernLogger;
+import com.github.groundbreakingmc.mylib.logger.console.LegacyLogger;
+import com.github.groundbreakingmc.mylib.logger.console.Logger;
+import com.github.groundbreakingmc.mylib.logger.console.LoggerFactory;
+import com.github.groundbreakingmc.mylib.logger.console.ModernLogger;
+import com.github.groundbreakingmc.mylib.logger.file.FileLogger;
 import com.github.groundbreakingmc.mylib.updateschecker.UpdatesChecker;
 import com.github.groundbreakingmc.mylib.utils.server.ServerInfo;
 import com.github.groundbreakingmc.mylib.utils.vault.VaultUtils;
@@ -30,6 +30,9 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
 
 @Getter
 public final class GigaChat extends JavaPlugin {
@@ -111,11 +114,20 @@ public final class GigaChat extends JavaPlugin {
         this.newbieChatListener = new NewbieChatListener(this);
         this.autoMessages = new AutoMessages(this);
         this.pmSoundsCollection = new PmSoundsCollection();
-        this.chatLogger = new FileLogger(this, "chat");
-        this.pmLogger = new FileLogger(this, "pm");
-        this.commandLogger = new FileLogger(this, "command");
-        this.pluginCommandLogger = new FileLogger(this, "plugin-command");
-        this.exceptionLogger = new FileLogger(this, "error"); // for future
+
+        final String logFolder = super.getDataFolder()
+                + File.separator + "logs"
+                + File.separator;
+
+        try {
+            this.chatLogger = new FileLogger(logFolder + "chat");
+            this.pmLogger = new FileLogger(logFolder + "pm");
+            this.commandLogger = new FileLogger(logFolder + "command");
+            this.pluginCommandLogger = new FileLogger(logFolder + "plugin-command");
+            this.exceptionLogger = new FileLogger(logFolder + "error"); // for future
+        } catch (final IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
