@@ -103,15 +103,13 @@ public final class ChatValues {
             final Map<Character, Chat> chatsTemp = new HashMap<>();
 
             final Set<String> chatsKeys = chatsSection.getKeys(false);
+            chatsKeys.remove("default");
+
             MainCommandExecutor.setChats(ImmutableList.copyOf(chatsKeys));
 
             final DefaultChat defaultChatConstructor = ChatUtil.createDefaultChat(this.plugin, chatsSection);
 
             for (final String key : chatsKeys) {
-                if (key.equals("default")) {
-                    continue;
-                }
-
                 final ConfigurationSection keySection = chatsSection.getConfigurationSection(key);
                 if (keySection == null) {
                     this.plugin.getCustomLogger().warn("Failed to load section \"chats." + key + "\" from file \"chats.yml\". Please check your configuration file, or delete it and restart your server!");
