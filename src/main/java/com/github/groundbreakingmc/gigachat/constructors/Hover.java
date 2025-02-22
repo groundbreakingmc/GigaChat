@@ -12,9 +12,9 @@ public record Hover(
     public static Hover get(final ConfigurationSection section, final Hover defaultHover) {
         if (section != null) {
             final boolean isEnabled = section.getBoolean("enable", defaultHover != null && defaultHover.isEnabled());
-            final String action = section.getString("click-action", defaultHover != null ? defaultHover.clickAction().name() : null);
-            final String value = section.getString("click-value", defaultHover != null ? defaultHover.clickValue() : null);
-            final String text = section.getString("text", defaultHover != null ? defaultHover.hoverText() : null);
+            final String action = isEnabled ? section.getString("click-action", defaultHover != null ? defaultHover.clickAction().name() : null) : null;
+            final String value = isEnabled ? section.getString("click-value", defaultHover != null ? defaultHover.clickValue() : null) : null;
+            final String text = isEnabled ? section.getString("text", defaultHover != null ? defaultHover.hoverText() : null) : null;
 
             return new Hover(isEnabled, ClickEvent.Action.valueOf(action), value, text);
         }

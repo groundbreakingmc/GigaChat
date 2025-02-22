@@ -6,11 +6,14 @@ import com.github.groundbreakingmc.gigachat.commands.privatemessages.PrivateMess
 import com.github.groundbreakingmc.gigachat.commands.privatemessages.ReplyExecutor;
 import com.github.groundbreakingmc.gigachat.commands.privatemessages.SocialSpyExecutor;
 import com.github.groundbreakingmc.gigachat.constructors.CommandParams;
+import com.github.groundbreakingmc.gigachat.constructors.Hover;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PermissionColorizer;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PrivateMessagesColorizer;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.colorizer.ColorizerFactory;
+import com.github.groundbreakingmc.mylib.config.ConfigLoader;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Sound;
@@ -27,14 +30,10 @@ public final class PrivateMessagesValues {
     private final GigaChat plugin;
 
     private boolean printLogsToConsole;
-    private boolean isSoundEnabled;
 
     private int pmCooldown;
     private int ignoreCooldown;
     private int spyCooldown;
-
-    private float soundVolume;
-    private float soundPitch;
 
     private Sound textValidatorDenySound;
     private Sound capsValidatorDenySound;
@@ -51,6 +50,12 @@ public final class PrivateMessagesValues {
     private String recipientFormat;
     private String socialSpyFormat;
     private String consoleFormat;
+
+    private boolean receiveSoundEnabled;
+    private SoundSettings soundSettings;
+
+    private Hover pmHover;
+    private Hover spyHover;
 
     private boolean isCharsValidatorBlockMessage;
     private boolean isCharsValidatorDenySoundEnabled;
@@ -79,7 +84,7 @@ public final class PrivateMessagesValues {
     }
 
     public void setValues() {
-        final FileConfiguration config = com.github.groundbreakingmc.mylib.config.ConfigLoader.builder(this.plugin, this.plugin.getCustomLogger())
+        final FileConfiguration config = ConfigLoader.builder(this.plugin, this.plugin.getCustomLogger())
                 .fileName("private-messages.yml")
                 .fileVersion(1.0)
                 .fileVersionPath("settings.config-version")
@@ -88,6 +93,7 @@ public final class PrivateMessagesValues {
         this.setupSettings(config);
         this.setupCommands(config);
         this.setupFormats(config);
+        this.setupHovers(config);
         this.setupValidators(config);
     }
 
@@ -169,19 +175,24 @@ public final class PrivateMessagesValues {
 
     private void setupSound(final ConfigurationSection settings) {
         final String soundString = settings.getString("sound");
-        if (soundString == null) {
+        if (soundString != null) {
+            if (!(this.receiveSoundEnabled = soundString.equalsIgnoreCase("disabled"))) {
+                this.soundSettings = SoundSettings.get(soundString);
+            }
+        } else {
             this.plugin.getCustomLogger().warn("Failed to load sound on path \"settings.sound\" from file \"private-messages.yml\". Please check your configuration file, or delete it and restart your server!");
             this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");
-            this.isSoundEnabled = false;
-        } else if (soundString.equalsIgnoreCase("disabled")) {
-            this.isSoundEnabled = false;
+        }
+    }
+
+    private void setupHovers(final FileConfiguration config) {
+        final ConfigurationSection hover = config.getConfigurationSection("hover");
+        if (hover != null) {
+            this.pmHover = Hover.get(config.getConfigurationSection("private-messages"), null);
+            this.spyHover = Hover.get(config.getConfigurationSection("socialspy"), null);
         } else {
-            final String[] params = soundString.split(";");
-            final String sound = params.length >= 1 ? params[0].toUpperCase(Locale.ENGLISH) : "BLOCK_BREWING_STAND_BREW";
-            this.plugin.getPmSoundsCollection().setDefaultSound(sound);
-            this.soundVolume = params.length >= 2 ? Float.parseFloat(params[1]) : 1.0f;
-            this.soundPitch = params.length >= 3 ? Float.parseFloat(params[2]) : 1.0f;
-            this.isSoundEnabled = true;
+            this.plugin.getCustomLogger().warn("Failed to load section \"validators\" from file \"chats.yml\". Please check your configuration file, or delete it and restart your server!");
+            this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");
         }
     }
 

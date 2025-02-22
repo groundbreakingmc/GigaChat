@@ -2,7 +2,7 @@ package com.github.groundbreakingmc.gigachat.database;
 
 import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.mylib.database.DatabaseUtils;
-import org.bukkit.Sound;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -181,12 +181,12 @@ public final class Database extends com.github.groundbreakingmc.mylib.database.D
      * @param playerUUID UUID of the player
      * @return name of the sound player has chosen
      */
-    public Sound getPlayerSelectedSound(final Connection connection, final UUID playerUUID) throws SQLException {
-        final String query = "SELECT soundName FROM privateMessagesSounds WHERE playerUUID = ?;";
+    public SoundSettings getPlayerSelectedSound(final Connection connection, final UUID playerUUID) throws SQLException {
+        final String query = "SELECT soundSettings FROM privateMessagesSounds WHERE playerUUID = ?;";
         try (final ResultSet result = super.getStatement(query, connection, playerUUID).executeQuery()) {
             if (result.next()) {
-                final String string = result.getString("soundName");
-                return Sound.valueOf(string);
+                final String string = result.getString("soundSettings");
+                return SoundSettings.get(string);
             }
         }
 

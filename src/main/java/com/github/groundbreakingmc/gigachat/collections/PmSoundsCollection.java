@@ -1,37 +1,39 @@
 package com.github.groundbreakingmc.gigachat.collections;
 
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.bukkit.Sound;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
 
 public final class PmSoundsCollection {
 
-    private final Map<UUID, Sound> sounds = new Object2ObjectOpenHashMap<>();
-    private Sound defaultSound;
+    private final Map<UUID, SoundSettings> sounds = new Object2ObjectOpenHashMap<>();
+    private SoundSettings defaultSound;
 
-    public void setDefaultSound(final String defaultSound) {
-        this.defaultSound = Sound.valueOf(defaultSound);
+    public void setDefaultSound(final SoundSettings defaultSound) {
+        this.defaultSound = defaultSound;
     }
 
-    public Sound getSound(final UUID uuid) {
-        if (sounds.isEmpty()) {
-            return defaultSound;
+    @NotNull
+    public SoundSettings getSound(final UUID uuid) {
+        if (this.sounds.isEmpty()) {
+            return this.defaultSound;
         }
 
-        return sounds.getOrDefault(uuid, defaultSound);
+        return this.sounds.getOrDefault(uuid, this.defaultSound);
     }
 
-    public void setSound(final UUID uuid, final Sound sound) {
-        sounds.put(uuid, sound);
+    public void setSound(final UUID uuid, final SoundSettings sound) {
+        this.sounds.put(uuid, sound);
     }
 
     public void remove(final UUID uuid) {
-        sounds.remove(uuid);
+        this.sounds.remove(uuid);
     }
 
     public boolean contains(final UUID uuid) {
-        return sounds.containsKey(uuid);
+        return this.sounds.containsKey(uuid);
     }
 }

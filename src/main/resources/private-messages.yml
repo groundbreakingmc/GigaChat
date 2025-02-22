@@ -72,6 +72,37 @@ formats:
   # Сообщение, которое отправится в консоль ("settings.print-to-console" должно быть включено, для этого)
   console-format: "&f[&r{from-prefix}{from-name}{from-suffix} &f-> &r{to-prefix}{to-name}{to-suffix}&f] &r{message}"
 
+hover:
+  # Настройки ховера для приватных сообщений (так-же для ответов)
+  private-messages:
+    # Включение модуля
+    enable: false
+    # Доступные действия: OPEN_URL, OPEN_FILE, RUN_COMMAND, SUGGEST_COMMAND, CHANGE_PAGE, COPY_TO_CLIPBOARD
+    click-action: 'SUGGEST_COMMAND'
+    # Команда/ссылка или другое
+    click-value: '/m {player} '
+    # Само сообщение которое будет показываться при наведении
+    text: |-
+      &fИнформация об игроке {player}
+      &fРанг: &6%vault_group%
+      &fХП: &6%player_health%
+      &fОпыт: &6%player_exp%
+
+  # Настройки ховера для приватных сообщений (так-же для ответов)
+  socialspy:
+    # Включение модуля
+    enable: false
+    # Доступные действия: OPEN_URL, OPEN_FILE, RUN_COMMAND, SUGGEST_COMMAND, CHANGE_PAGE, COPY_TO_CLIPBOARD
+    click-action: 'SUGGEST_COMMAND'
+    # Команда/ссылка или другое
+    click-value: '/m {player} '
+    # Само сообщение которое будет показываться при наведении
+    text: |-
+      &fИнформация об игроке {player}
+      &fРанг: &6%vault_group%
+      &fХП: &6%player_health%
+      &fОпыт: &6%player_exp%
+
 validators:
   chars:
     # Включение модуля

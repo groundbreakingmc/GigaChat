@@ -4,6 +4,7 @@ import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.gigachat.collections.PmSoundsCollection;
 import com.github.groundbreakingmc.gigachat.constructors.Argument;
 import com.github.groundbreakingmc.gigachat.database.Database;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -50,9 +51,10 @@ public final class SetPmSoundArgument extends Argument {
             return true;
         }
 
-        this.pmSoundsCollection.setSound(targetUUID, sound);
-        this.sendPmSoundMessage(sender, target, sound, isSenderTarget, messageForTargetIsEmpty);
-        this.updateDatabase(targetUUID, sound.name(), Database.ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS);
+        final SoundSettings soundSettings = SoundSettings.builder().sound(sound).build();
+        this.pmSoundsCollection.setSound(targetUUID, soundSettings);
+        this.sendPmSoundMessage(sender, target, soundSettings, isSenderTarget, messageForTargetIsEmpty);
+        this.updateDatabase(targetUUID, soundSettings.toString(), Database.ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS);
 
         super.getPlugin().getPluginCommandLogger().log(() ->
                 "[SET-PM-SOUND] [" + sender.getName() + "] set " + args[2] + " for " + target.getName()
@@ -91,17 +93,17 @@ public final class SetPmSoundArgument extends Argument {
     }
 
     private void sendPmSoundMessage(final CommandSender sender, final Player target,
-                                    final Sound sound, final boolean isSenderTarget,
+                                    final SoundSettings sound, final boolean isSenderTarget,
                                     final boolean messageForTargetIsEmpty) {
         if (!isSenderTarget || !messageForTargetIsEmpty) {
             sender.sendMessage(super.getMessages().getTargetPmSoundSet()
                     .replace("{player}", target.getName())
-                    .replace("{sound}", sound.name()));
+                    .replace("{sound}", sound.sound.name()));
         }
 
         if (!messageForTargetIsEmpty) {
             target.sendMessage(super.getMessages().getPmSoundSet()
-                    .replace("{sound}", sound.name()));
+                    .replace("{sound}", sound.sound.name()));
         }
     }
 
@@ -118,5 +120,4 @@ public final class SetPmSoundArgument extends Argument {
             }
         });
     }
-
 }

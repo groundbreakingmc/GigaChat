@@ -5,8 +5,8 @@ import com.github.groundbreakingmc.gigachat.collections.*;
 import com.github.groundbreakingmc.gigachat.constructors.Chat;
 import com.github.groundbreakingmc.gigachat.database.Database;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.ChatValues;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -72,7 +72,7 @@ public final class DisconnectListener implements Listener {
                 if (!ignoredPrivate.isEmpty()) {
                     IgnoreCollections.addToIgnoredPrivate(playerUUID, ignoredPrivate);
                 }
-                final Sound sound = this.database.getPlayerSelectedSound(connection, playerUUID);
+                final SoundSettings sound = this.database.getPlayerSelectedSound(connection, playerUUID);
                 if (sound != null) {
                     this.pmSoundsCollection.setSound(playerUUID, sound);
                 }

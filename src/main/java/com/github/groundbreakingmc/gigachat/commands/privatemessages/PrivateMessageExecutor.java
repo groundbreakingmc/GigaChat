@@ -11,6 +11,7 @@ import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PrivateMess
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -353,14 +354,9 @@ public final class PrivateMessageExecutor implements TabExecutor {
     }
 
     private void playSound(final Player recipient) {
-        if (pmValues.isSoundEnabled()) {
-            final Sound sound = this.pmSoundsCollection.getSound(recipient.getUniqueId());
-            if (sound != null) {
-                final Location recipientLocation = recipient.getLocation();
-                final float volume = this.pmValues.getSoundVolume();
-                final float pitch = this.pmValues.getSoundPitch();
-                recipient.playSound(recipientLocation, sound, volume, pitch);
-            }
+        if (this.pmValues.isReceiveSoundEnabled()) {
+            final SoundSettings sound = this.pmSoundsCollection.getSound(recipient.getUniqueId());
+            PlayerUtils.playSound(recipient, sound);
         }
     }
 

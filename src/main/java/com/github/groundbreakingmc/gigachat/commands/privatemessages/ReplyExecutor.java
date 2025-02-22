@@ -8,6 +8,7 @@ import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
+import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -166,12 +167,9 @@ public final class ReplyExecutor implements TabExecutor {
     }
 
     private void playSound(final Player recipient) {
-        final Sound sound = this.pmSoundsCollection.getSound(recipient.getUniqueId());
-        if (this.pmValues.isSoundEnabled()) {
-            final Location recipientLocation = recipient.getLocation();
-            final float volume = this.pmValues.getSoundVolume();
-            final float pitch = this.pmValues.getSoundPitch();
-            recipient.playSound(recipientLocation, sound, volume, pitch);
+        if (this.pmValues.isReceiveSoundEnabled()) {
+            final SoundSettings sound = this.pmSoundsCollection.getSound(recipient.getUniqueId());
+            PlayerUtils.playSound(recipient, sound);
         }
     }
 
