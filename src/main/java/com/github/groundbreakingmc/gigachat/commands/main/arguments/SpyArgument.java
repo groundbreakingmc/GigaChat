@@ -76,7 +76,7 @@ public final class SpyArgument extends Argument {
                 sender.sendMessage(super.getMessages().getChatsSpyDisabled());
             }
             players.remove(target);
-            this.processDatabase(targetUUID, Database.REMOVE_PLAYER_FROM_SOCIAL_SPY);
+            this.processDatabase(targetUUID, Database.REMOVE_CHAT_FOR_PLAYER_FROM_CHAT_LISTENERS, chatName);
             mode = "disabled";
         } else {
             if (sender != target) {
@@ -86,7 +86,7 @@ public final class SpyArgument extends Argument {
                 sender.sendMessage(super.getMessages().getChatsSpyEnabled());
             }
             players.add(target);
-            this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_SOCIAL_SPY);
+            this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_CHAT_LISTENERS, chatName);
             mode = "enabled";
         }
 
@@ -103,10 +103,10 @@ public final class SpyArgument extends Argument {
         }
     }
 
-    private void processDatabase(final UUID targetUUID, final String query) {
+    private void processDatabase(final UUID targetUUID, final String query, final String chatName) {
         Bukkit.getScheduler().runTaskAsynchronously(super.getPlugin(), () -> {
             try (final Connection connection = super.getDatabase().getConnection()) {
-                super.getDatabase().executeUpdateQuery(query, connection, targetUUID);
+                super.getDatabase().executeUpdateQuery(query, connection, targetUUID, chatName);
             } catch (final SQLException ex) {
                 ex.printStackTrace();
             }
