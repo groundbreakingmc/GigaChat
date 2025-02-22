@@ -85,9 +85,9 @@ public final class Database extends com.github.groundbreakingmc.mylib.database.D
      * Adds the player name to the "privateMessagesSounds" table, to save the player's choice
      */
     public static final String ADD_PLAYER_PM_SOUND_TO_PRIVATE_MESSAGES_SOUNDS = """
-                INSERT INTO privateMessagesSounds(playerUUID, soundName)
+                INSERT INTO privateMessagesSounds(playerUUID, soundSettings)
                 VALUES(?, ?)
-                ON CONFLICT(playerUUID) DO UPDATE SET soundName = excluded.soundName;
+                ON CONFLICT(playerUUID) DO UPDATE SET soundSettings = excluded.soundSettings;
             """;
 
     /**
@@ -149,10 +149,10 @@ public final class Database extends com.github.groundbreakingmc.mylib.database.D
                 "CREATE TABLE IF NOT EXISTS disabledPrivateMessages(playerUUID TEXT NOT NULL UNIQUE);",
                 "CREATE TABLE IF NOT EXISTS ignoreChat(playerUUID TEXT NOT NULL, ignoredUUID TEXT NOT NULL, PRIMARY KEY(playerUUID, ignoredUUID));",
                 "CREATE TABLE IF NOT EXISTS ignorePrivate(playerUUID TEXT NOT NULL, ignoredUUID TEXT NOT NULL, PRIMARY KEY(playerUUID, ignoredUUID));",
-                "CREATE TABLE IF NOT EXISTS privateMessagesSounds(playerUUID TEXT NOT NULL UNIQUE, soundName TEXT NOT NULL);",
+                "CREATE TABLE IF NOT EXISTS privateMessagesSounds(playerUUID TEXT NOT NULL UNIQUE, soundSettings TEXT NOT NULL);",
                 "CREATE TABLE IF NOT EXISTS socialSpy(playerUUID TEXT NOT NULL UNIQUE);",
                 "CREATE TABLE IF NOT EXISTS autoMessages(playerUUID TEXT NOT NULL UNIQUE);",
-                "CREATE TABLE IF NOT EXISTS chatListeners (playerUUID TEXT NOT NULL, chatName TEXT NOT NULL, PRIMARY KEY(playerUUID, chatName));"
+                "CREATE TABLE IF NOT EXISTS chatListeners(playerUUID TEXT NOT NULL, chatName TEXT NOT NULL, PRIMARY KEY(playerUUID, chatName));"
         };
 
         try (final Connection connection = super.getConnection()) {
