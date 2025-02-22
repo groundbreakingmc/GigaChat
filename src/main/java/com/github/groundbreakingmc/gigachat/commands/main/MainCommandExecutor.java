@@ -154,10 +154,10 @@ public final class MainCommandExecutor implements TabExecutor {
             completions.add("messages");
         }
         final boolean newbieGuard = Bukkit.getPluginManager().isPluginEnabled("NewbieGuard");
-        if (StringUtil.startsWithIgnoreCase("newbie-chat", input) && !newbieGuard) {
+        if (!newbieGuard && StringUtil.startsWithIgnoreCase("newbie-chat", input)) {
             completions.add("newbie-chat");
         }
-        if (StringUtil.startsWithIgnoreCase("newbie-private", input) && !newbieGuard) {
+        if (!newbieGuard && StringUtil.startsWithIgnoreCase("newbie-private", input)) {
             completions.add("newbie-private");
         }
         if (StringUtil.startsWithIgnoreCase("private-messages", input)) {
