@@ -52,7 +52,6 @@ public final class PrivateMessagesValues {
     private String consoleFormat;
 
     private boolean receiveSoundEnabled;
-    private SoundSettings soundSettings;
 
     private Hover pmHover;
     private Hover spyHover;
@@ -176,9 +175,11 @@ public final class PrivateMessagesValues {
     private void setupSound(final ConfigurationSection settings) {
         final String soundString = settings.getString("sound");
         if (soundString != null) {
-            if (!(this.receiveSoundEnabled = soundString.equalsIgnoreCase("disabled"))) {
-                this.soundSettings = SoundSettings.get(soundString);
-            }
+            final SoundSettings soundSettings = (this.receiveSoundEnabled = soundString.equalsIgnoreCase("disabled"))
+                    ? null
+                    : SoundSettings.get(soundString);
+
+            this.plugin.getPmSoundsCollection().setDefaultSound(soundSettings);
         } else {
             this.plugin.getCustomLogger().warn("Failed to load sound on path \"settings.sound\" from file \"private-messages.yml\". Please check your configuration file, or delete it and restart your server!");
             this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");
