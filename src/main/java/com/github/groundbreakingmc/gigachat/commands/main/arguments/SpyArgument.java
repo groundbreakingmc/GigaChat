@@ -63,27 +63,27 @@ public final class SpyArgument extends Argument {
     private boolean process(final CommandSender sender, final Player target, final Chat chat) {
         final Set<Player> players = chat.getSpyListeners();
         final String chatName = chat.getName();
-        final String replacement = super.getMessages().getChatNames().getOrDefault(chatName, chatName);
+        final String chatNameReplacement = super.getMessages().getChatNames().getOrDefault(chatName, chatName);
         final String targetName = target.getName();
         final UUID targetUUID = target.getUniqueId();
         final String mode;
 
         if (players.contains(target)) {
             if (sender != target) {
-                sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", replacement));
-                this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), replacement);
+                sender.sendMessage(super.getMessages().getChatsSpyDisabledOther().replace("{player}", targetName).replace("{chat}", chatNameReplacement));
+                this.sendMessage(target, super.getMessages().getChatsSpyDisabledByOther(), chatNameReplacement);
             } else {
-                sender.sendMessage(super.getMessages().getChatsSpyDisabled());
+                sender.sendMessage(super.getMessages().getChatsSpyDisabled().replace("{chat}", chatNameReplacement));
             }
             players.remove(target);
             this.processDatabase(targetUUID, Database.REMOVE_CHAT_FOR_PLAYER_FROM_CHAT_LISTENERS, chatName);
             mode = "disabled";
         } else {
             if (sender != target) {
-                sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", replacement));
-                this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), replacement);
+                sender.sendMessage(super.getMessages().getChatsSpyEnabledOther().replace("{player}", targetName).replace("{chat}", chatNameReplacement));
+                this.sendMessage(target, super.getMessages().getChatsSpyEnabledByOther(), chatNameReplacement);
             } else {
-                sender.sendMessage(super.getMessages().getChatsSpyEnabled());
+                sender.sendMessage(super.getMessages().getChatsSpyEnabled().replace("{chat}", chatNameReplacement));
             }
             players.add(target);
             this.processDatabase(targetUUID, Database.ADD_PLAYER_TO_CHAT_LISTENERS, chatName);
