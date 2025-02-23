@@ -50,6 +50,8 @@ sender-ignores-himself: "&cВы не можете написать игроку 
 
 has-disabled-private-messages: "&cУ этого игрока отключены приватные сообщения!"
 
+is-afk: "&cЭтот игрок афк!"
+
 socialspy-enabled: "&aТеперь вы прослушиваете личные сообщения!"
 socialspy-disabled: "&cВы больше не прослушиваете личные сообщения!"
 

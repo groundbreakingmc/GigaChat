@@ -4,6 +4,7 @@ import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.gigachat.collections.*;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.afk.AfkChecker;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
@@ -85,6 +86,12 @@ public final class ReplyExecutor implements TabExecutor {
                 sender.sendMessage(this.messages.getSenderIgnoresRecipient());
                 return true;
             }
+        }
+
+        final AfkChecker afkChecker = this.plugin.getAfkChecker();
+        if (afkChecker != null && afkChecker.isAfk(recipient)) {
+            sender.sendMessage(this.messages.getIsAfk());
+            return true;
         }
 
         final String message = this.getValidMessage(playerSender, this.getMessage(playerSender, args));

@@ -43,6 +43,7 @@ public final class Messages {
     private String recipientIgnoresSender;
     private String senderIgnoresRecipient;
     private String hasDisabledPm;
+    private String isAfk;
     private String spyEnabled;
     private String spyDisabled;
     private String chatIgnoreEnabled;
@@ -133,6 +134,7 @@ public final class Messages {
         this.recipientIgnoresSender = this.getMessage(config, "recipient-ignores-sender", colorizer);
         this.senderIgnoresRecipient = this.getMessage(config, "sender-ignores-himself", colorizer);
         this.hasDisabledPm = this.getMessage(config, "has-disabled-private-messages", colorizer);
+        this.isAfk = this.getMessage(config, "is-afk", colorizer);
         this.spyEnabled = this.getMessage(config, "socialspy-enabled", colorizer);
         this.spyDisabled = this.getMessage(config, "socialspy-disabled", colorizer);
         this.chatIgnoreEnabled = this.getMessage(config, "chat-ignore-enabled", colorizer);

@@ -11,6 +11,8 @@ import com.github.groundbreakingmc.gigachat.listeners.ChatListener;
 import com.github.groundbreakingmc.gigachat.listeners.DisconnectListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieChatListener;
 import com.github.groundbreakingmc.gigachat.listeners.NewbieCommandListener;
+import com.github.groundbreakingmc.gigachat.utils.afk.AfkChecker;
+import com.github.groundbreakingmc.gigachat.utils.afk.EssentialsAfkChecker;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.*;
 import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.colorizer.LegacyColorizer;
@@ -75,6 +77,8 @@ public final class GigaChat extends JavaPlugin {
     private final FileLogger pluginCommandLogger;
     private final FileLogger exceptionLogger;
 
+    private final AfkChecker afkChecker;
+
     public GigaChat() {
         if (!ServerInfo.isPaperOrFork()) {
             throw new NotPaperException(this);
@@ -128,6 +132,8 @@ public final class GigaChat extends JavaPlugin {
         } catch (final IOException ex) {
             throw new RuntimeException(ex);
         }
+
+        this.afkChecker = super.getServer().getPluginManager().getPlugin("essentials") != null ? new EssentialsAfkChecker(this) : null;
     }
 
     @Override

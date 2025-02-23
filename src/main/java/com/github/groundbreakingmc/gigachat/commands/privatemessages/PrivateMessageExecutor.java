@@ -5,6 +5,7 @@ import com.github.groundbreakingmc.gigachat.collections.*;
 import com.github.groundbreakingmc.gigachat.database.Database;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
+import com.github.groundbreakingmc.gigachat.utils.afk.AfkChecker;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PermissionColorizer;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PrivateMessagesColorizer;
@@ -77,7 +78,8 @@ public final class PrivateMessageExecutor implements TabExecutor {
 
         final boolean isPlayerSender;
         if (recipient == null
-                || (isPlayerSender = sender instanceof Player) && !((Player) sender).canSee(recipient)
+                || (isPlayerSender = sender instanceof Player)
+                && !((Player) sender).canSee(recipient)
                 || PlayerUtils.isVanished(recipient)) {
             sender.sendMessage(this.messages.getPlayerNotFound());
             return true;
@@ -111,6 +113,12 @@ public final class PrivateMessageExecutor implements TabExecutor {
                 sender.sendMessage(this.messages.getHasDisabledPm());
                 return true;
             }
+        }
+
+        final AfkChecker afkChecker = this.plugin.getAfkChecker();
+        if (afkChecker != null && afkChecker.isAfk(recipient)) {
+            sender.sendMessage(this.messages.getIsAfk());
+            return true;
         }
 
         String message = getMessage(sender, args, isPlayerSender);
