@@ -2,7 +2,9 @@ package com.github.groundbreakingmc.gigachat.commands.privatemessages;
 
 import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.gigachat.collections.*;
+import com.github.groundbreakingmc.gigachat.constructors.Hover;
 import com.github.groundbreakingmc.gigachat.database.Database;
+import com.github.groundbreakingmc.gigachat.utils.HoverUtils;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
 import com.github.groundbreakingmc.gigachat.utils.afk.AfkChecker;
@@ -11,8 +13,11 @@ import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PermissionC
 import com.github.groundbreakingmc.gigachat.utils.colorizer.messages.PrivateMessagesColorizer;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
+import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
 import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -283,8 +288,12 @@ public final class PrivateMessageExecutor implements TabExecutor {
 
     private void process(final CommandSender sender, final Player recipient,
                          final UUID recipientUUID, final boolean isPlayerSender, final String message) {
-        final String recipientPrefix = this.plugin.getChat().getPlayerPrefix(recipient);
-        final String recipientSuffix = this.plugin.getChat().getPlayerSuffix(recipient);
+        final Chat chat = this.plugin.getChat();
+        final Hover hover = this.pmValues.getPmHover();
+        final Colorizer formatColorizer = this.pmValues.getFormatColorizer();
+
+        final String recipientPrefix = chat.getPlayerPrefix(recipient);
+        final String recipientSuffix = chat.getPlayerSuffix(recipient);
 
         final String formattedMessageForSender;
         final String formattedMessageForRecipient;
@@ -292,8 +301,8 @@ public final class PrivateMessageExecutor implements TabExecutor {
         final String formattedMessageForSocialSpy;
         if (isPlayerSender) {
             final Player playerSender = (Player) sender;
-            final String senderPrefix = this.plugin.getChat().getPlayerPrefix(playerSender);
-            final String senderSuffix = this.plugin.getChat().getPlayerSuffix(playerSender);
+            final String senderPrefix = chat.getPlayerPrefix(playerSender);
+            final String senderSuffix = chat.getPlayerSuffix(playerSender);
 
             formattedMessageForSender = this.getFormattedMessage(playerSender, recipient, message, this.pmValues.getSenderFormat(), senderPrefix, senderSuffix, recipientPrefix, recipientSuffix);
             formattedMessageForRecipient = this.getFormattedMessage(playerSender, recipient, message, this.pmValues.getRecipientFormat(), senderPrefix, senderSuffix, recipientPrefix, recipientSuffix);
@@ -303,14 +312,28 @@ public final class PrivateMessageExecutor implements TabExecutor {
             final UUID senderUUID = ((Player) sender).getUniqueId();
             ReplyCollection.add(recipientUUID, senderUUID);
             this.processLogs(formattedMessageForConsole);
-            SocialSpyCollection.sendAll(playerSender, recipient, formattedMessageForSocialSpy);
+            SocialSpyCollection.sendAll(
+                    playerSender, senderPrefix, senderSuffix,
+                    recipient, recipientPrefix, recipientSuffix,
+                    this.pmValues.getSpyHover(), formattedMessageForSocialSpy, formatColorizer
+            );
+
+            if (hover.isEnabled()) {
+                final BaseComponent[] senderComponents = HoverUtils.get(recipient, senderPrefix, senderSuffix, hover, hover.hoverText(), formattedMessageForSender, formatColorizer);
+                playerSender.sendMessage(senderComponents);
+
+                final BaseComponent[] recipientComponents = HoverUtils.get(playerSender, senderPrefix, senderSuffix, hover, hover.hoverText(), formattedMessageForRecipient, formatColorizer);
+                recipient.sendMessage(recipientComponents);
+            }
         } else {
             formattedMessageForSender = this.getFormattedMessage(sender, recipient, message, this.pmValues.getSenderFormat(), recipientPrefix, recipientSuffix);
             formattedMessageForRecipient = this.getFormattedMessage(sender, recipient, message, this.pmValues.getRecipientFormat(), recipientPrefix, recipientSuffix);
         }
 
-        sender.sendMessage(formattedMessageForSender);
-        recipient.sendMessage(formattedMessageForRecipient);
+        if (!isPlayerSender || !hover.isEnabled()) {
+            sender.sendMessage(formattedMessageForSender);
+            recipient.sendMessage(formattedMessageForRecipient);
+        }
 
         this.plugin.getPmLogger().log(() ->
                 "[PM] [" + sender.getName() + " -> " + recipient.getName() + "] " + ColorizerUtils.getClear(message)

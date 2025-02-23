@@ -11,20 +11,25 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.entity.Player;
 
 @UtilityClass
-public final class HoverUtils {
+public class HoverUtils {
 
-    public static BaseComponent[] get(final Player sender,
-                                      final Hover hover,
-                                      final String hoverText,
-                                      final String message,
-                                      final Colorizer colorizer) {
-        final String hoverString = colorizer.colorize(
-                Utils.replacePlaceholders(sender, hoverText)
+    public BaseComponent[] get(final Player sender, final String prefix, final String suffix,
+                               final Hover hover, final String hoverText,
+                               final String message,
+                               final Colorizer colorizer) {
+        final String replaced = colorizer.colorize(
+                Utils.replacePlaceholders(sender, hoverText
+                        .replace("{player}", sender.getName())
+                        .replace("{prefix}", prefix)
+                        .replace("{suffix}", suffix)
+                )
         );
-        final String hoverValue = hover.clickValue().replace("{player}", sender.getName());
 
-        final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(TextComponent.fromLegacyText(hoverString)));
+        final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(TextComponent.fromLegacyText(replaced)));
+
+        final String hoverValue = hover.clickValue().replace("{player}", sender.getName());
         final ClickEvent clickEvent = new ClickEvent(hover.clickAction(), hoverValue);
+
         final BaseComponent[] components = TextComponent.fromLegacyText(message);
 
         for (int i = 0; i < components.length; i++) {

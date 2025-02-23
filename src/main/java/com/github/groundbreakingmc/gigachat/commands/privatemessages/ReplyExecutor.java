@@ -2,14 +2,18 @@ package com.github.groundbreakingmc.gigachat.commands.privatemessages;
 
 import com.github.groundbreakingmc.gigachat.GigaChat;
 import com.github.groundbreakingmc.gigachat.collections.*;
+import com.github.groundbreakingmc.gigachat.constructors.Hover;
+import com.github.groundbreakingmc.gigachat.utils.HoverUtils;
 import com.github.groundbreakingmc.gigachat.utils.StringValidator;
 import com.github.groundbreakingmc.gigachat.utils.Utils;
 import com.github.groundbreakingmc.gigachat.utils.afk.AfkChecker;
 import com.github.groundbreakingmc.gigachat.utils.colorizer.ColorizerUtils;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.Messages;
 import com.github.groundbreakingmc.gigachat.utils.configvalues.PrivateMessagesValues;
+import com.github.groundbreakingmc.mylib.colorizer.Colorizer;
 import com.github.groundbreakingmc.mylib.utils.player.PlayerUtils;
 import com.github.groundbreakingmc.mylib.utils.player.settings.SoundSettings;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -19,6 +23,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -109,12 +114,27 @@ public final class ReplyExecutor implements TabExecutor {
         final String formattedMessageForConsole = this.getFormattedMessage(playerSender, recipient, message, this.pmValues.getConsoleFormat(), senderPrefix, senderSuffix, recipientPrefix, recipientSuffix);
         final String formattedMessageForSocialSpy = this.getFormattedMessage(playerSender, recipient, message, this.pmValues.getSocialSpyFormat(), senderPrefix, senderSuffix, recipientPrefix, recipientSuffix);
 
+        final @Nullable Hover hover = this.pmValues.getPmHover();
+        final Colorizer formatColorizer = this.pmValues.getFormatColorizer();
+
         ReplyCollection.add(recipientUUID, senderUUID);
         this.processLogs(formattedMessageForConsole);
-        SocialSpyCollection.sendAll(playerSender, recipient, formattedMessageForSocialSpy);
+        SocialSpyCollection.sendAll(
+                playerSender, senderPrefix, senderSuffix,
+                recipient, recipientPrefix, recipientSuffix,
+                this.pmValues.getSpyHover(), formattedMessageForSocialSpy, formatColorizer
+        );
 
-        playerSender.sendMessage(formattedMessageForSender);
-        recipient.sendMessage(formattedMessageForRecipient);
+        if (hover != null && hover.isEnabled()) {
+            final BaseComponent[] senderComponents = HoverUtils.get(recipient, senderPrefix, senderSuffix, hover, hover.hoverText(), formattedMessageForSender, formatColorizer);
+            playerSender.sendMessage(senderComponents);
+
+            final BaseComponent[] recipientComponents = HoverUtils.get(playerSender, senderPrefix, senderSuffix, hover, hover.hoverText(), formattedMessageForRecipient, formatColorizer);
+            recipient.sendMessage(recipientComponents);
+        } else {
+            playerSender.sendMessage(formattedMessageForSender);
+            recipient.sendMessage(formattedMessageForRecipient);
+        }
 
         this.playSound(recipient);
 

@@ -86,14 +86,14 @@ public final class ChatListener implements Listener {
         final Hover adminHover = chat.getAdminHover();
         if (adminHover.isEnabled()) {
             final Set<Player> adminRecipients = this.getAdminRecipients(recipients);
-            this.sendHover(sender, formattedMessage, adminHover, adminRecipients, prefix, suffix, color);
+            this.sendHover(sender, formattedMessage, adminHover, adminRecipients, prefix, suffix);
         }
 
         chat.addCooldown(sender);
 
         final Hover hover = chat.getHover();
         if (hover.isEnabled()) {
-            this.sendHover(sender, formattedMessage, hover, recipients, prefix, suffix, color);
+            this.sendHover(sender, formattedMessage, hover, recipients, prefix, suffix);
             this.plugin.getServer().getConsoleSender().sendMessage(formattedMessage);
             event.setCancelled(true);
         } else {
@@ -185,15 +185,13 @@ public final class ChatListener implements Listener {
         return message;
     }
 
-    private void sendHover(final Player sender, final String message, final Hover hover, final Set<Player> recipients,
-                           final String prefix, final String suffix, final String color) {
-        final String hoverText = hover.hoverText()
-                .replace("{player}", sender.getName())
-                .replace("{prefix}", prefix)
-                .replace("{suffix}", suffix)
-                .replace("{color}", color);
-        final Colorizer colorizer = this.chatValues.getFormatColorizer();
-        final BaseComponent[] components = HoverUtils.get(sender, hover, hoverText, message, colorizer);
+    private void sendHover(final Player sender, final String message,
+                           final Hover hover, final Set<Player> recipients,
+                           final String prefix, final String suffix) {
+        final Colorizer formatColorizer = this.chatValues.getFormatColorizer();
+
+        final BaseComponent[] components = HoverUtils.get(sender, prefix, suffix, hover, hover.hoverText(), message, formatColorizer);
+
         for (final Player recipient : recipients) {
             recipient.spigot().sendMessage(components);
         }
@@ -207,7 +205,7 @@ public final class ChatListener implements Listener {
 
         final Hover hover = chat.getHover();
         if (hover.isEnabled()) {
-            this.sendHover(sender, formattedMessage, hover, spyRecipients, prefix, suffix, color);
+            this.sendHover(sender, formattedMessage, hover, spyRecipients, prefix, suffix);
             return;
         }
 
@@ -232,12 +230,11 @@ public final class ChatListener implements Listener {
     public String getFormattedMessage(final Player sender, String message, final String format,
                                       final String prefix, final String suffix, final String color) {
         final String formattedMessage = this.chatValues.getFormatColorizer().colorize(
-                Utils.replacePlaceholders(
-                        sender,
-                        format.replace("{player}", sender.getName())
-                                .replace("{prefix}", prefix)
-                                .replace("{suffix}", suffix)
-                                .replace("{color}", color)
+                Utils.replacePlaceholders(sender, format
+                        .replace("{player}", sender.getName())
+                        .replace("{prefix}", prefix)
+                        .replace("{suffix}", suffix)
+                        .replace("{color}", color)
                 )
         );
 

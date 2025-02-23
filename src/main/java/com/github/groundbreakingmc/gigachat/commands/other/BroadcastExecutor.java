@@ -127,12 +127,12 @@ public final class BroadcastExecutor implements TabExecutor {
     private void sendHover(final Player sender, final String message) {
         final Hover hover = this.broadcastValues.getHover();
         final Chat chat = this.plugin.getChat();
-        final String hoverText = hover.hoverText()
-                .replace("{player}", sender.getName())
-                .replace("{prefix}", chat.getPlayerPrefix(sender))
-                .replace("{suffix}", chat.getPlayerSuffix(sender));
-        final Colorizer colorizer = this.broadcastValues.getFormatColorizer();
-        final BaseComponent[] components = HoverUtils.get(sender, hover, hoverText, message, colorizer);
+        final String prefix = chat.getPlayerPrefix(sender);
+        final String suffix = chat.getPlayerSuffix(sender);
+        final Colorizer formatColorizer = this.broadcastValues.getFormatColorizer();
+
+        final BaseComponent[] components = HoverUtils.get(sender, prefix, suffix, hover, hover.hoverText(), message, formatColorizer);
+
         for (final Player recipient : Bukkit.getOnlinePlayers()) {
             recipient.spigot().sendMessage(components);
             if (this.broadcastValues.getSoundSettings() != null) {

@@ -19,6 +19,7 @@ import lombok.Getter;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +54,9 @@ public final class PrivateMessagesValues {
 
     private boolean receiveSoundEnabled;
 
+    @Nullable
     private Hover pmHover;
+    @Nullable
     private Hover spyHover;
 
     private boolean isCharsValidatorBlockMessage;
@@ -189,8 +192,8 @@ public final class PrivateMessagesValues {
     private void setupHovers(final FileConfiguration config) {
         final ConfigurationSection hover = config.getConfigurationSection("hover");
         if (hover != null) {
-            this.pmHover = Hover.get(config.getConfigurationSection("private-messages"), null);
-            this.spyHover = Hover.get(config.getConfigurationSection("socialspy"), null);
+            this.pmHover = Hover.get(hover.getConfigurationSection("private-messages"), null);
+            this.spyHover = Hover.get(hover.getConfigurationSection("socialspy"), null);
         } else {
             this.plugin.getCustomLogger().warn("Failed to load section \"validators\" from file \"chats.yml\". Please check your configuration file, or delete it and restart your server!");
             this.plugin.getCustomLogger().warn("If you think this is a plugin error, leave a issue on the https://github.com/grounbreakingmc/GigaChat/issues");

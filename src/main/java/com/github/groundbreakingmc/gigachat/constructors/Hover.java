@@ -2,6 +2,7 @@ package com.github.groundbreakingmc.gigachat.constructors;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 public record Hover(
         boolean isEnabled,
@@ -9,7 +10,9 @@ public record Hover(
         String clickValue,
         String hoverText
 ) {
-    public static Hover get(final ConfigurationSection section, final Hover defaultHover) {
+
+    @Nullable
+    public static Hover get(final @Nullable ConfigurationSection section, final @Nullable Hover defaultHover) {
         if (section != null) {
             final boolean isEnabled = section.getBoolean("enable", defaultHover != null && defaultHover.isEnabled());
             final ClickEvent.Action action = isEnabled ? ClickEvent.Action.valueOf(section.getString("click-action", defaultHover != null ? defaultHover.clickAction().name() : null)) : null;
